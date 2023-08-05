@@ -7,6 +7,7 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [kw, setKw] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -22,9 +23,19 @@ const App = () => {
     setNewNumber('')
   }
 
+  const filteredPersons = kw
+    ? persons.filter(p => p.name.includes(kw))
+    : persons
+
   return (
     <>
       <h2>PhoneBook</h2>
+      <div>filter shown with
+        <input
+          value={kw}
+          onChange={e => setKw(e.target.value)}
+        />
+      </div>
       <form onSubmit={handleSubmit}>
         <div>name:
           <input
@@ -42,7 +53,7 @@ const App = () => {
       </form >
       <h2>Numbers</h2>
       {
-        persons.map(person =>
+        filteredPersons.map(person =>
           <p
             key={person.name}>
             {person.name} {person.number}
