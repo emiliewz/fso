@@ -2,6 +2,9 @@ import { useState } from "react";
 
 // a proper place to define a component
 const Statistics = ({ good, neutral, bad }) => {
+  if (!good && !neutral && !bad) {
+    return <p>No feedback given</p>
+  }
   return <>
     <p>good {good}</p>
     <p>neutral {neutral}</p>
