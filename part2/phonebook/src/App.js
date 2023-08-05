@@ -9,6 +9,12 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const duplicate = persons.filter(p => p.name === newName).length !== 0
+
+    if (duplicate) {
+      return alert(`${newName} is already added to phonebook`)
+    }
+    
     setPersons([
       ...persons,
       { name: newName }
