@@ -28,12 +28,16 @@ const App = () => {
     if (duplicate) {
       return alert(`${newName} is already added to phonebook`)
     }
-    setPersons([
-      ...persons,
-      { name: newName, number: newNumber }
-    ])
-    setNewName('')
-    setNewNumber('')
+
+    const personObject = { name: newName, number: newNumber }
+    axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => response.data)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const filteredPersons = kw
