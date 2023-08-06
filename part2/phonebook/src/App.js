@@ -4,11 +4,22 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './service/persons'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='msg'>{message}</div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [kw, setKw] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     // console.log('effect');
@@ -32,12 +43,18 @@ const App = () => {
         personService.update(duplicate[0].id, personObject)
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== duplicate[0].id ? p : returnedPerson))
+            setMessage(`Added ${newName}`)
+            setTimeout(() => { setMessage(null) }, 5000)
           })
       }
     } else { // if no duplicate, create a new person with a number
       personService
         .create(personObject)
-        .then(returnedPerson => setPersons(persons.concat(returnedPerson)))
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setMessage(`Added ${newName}`)
+          setTimeout(() => { setMessage(null) }, 5000)
+        })
     }
     setNewName('')
     setNewNumber('')
@@ -58,6 +75,8 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+
+      <Notification message={message} />
 
       <Filter kw={kw} setKw={setKw} />
 
