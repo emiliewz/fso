@@ -4,13 +4,18 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './service/persons'
 
-const Notification = ({ message }) => {
+const Notification = ({ message, isError }) => {
   if (message === null) {
     return null
   }
 
   return (
-    <div className='msg'>{message}</div>
+    <div className='msg'
+      style={{
+        color: isError ? 'red' : 'green'
+      }}>
+      {message}
+    </div >
   )
 }
 
@@ -20,6 +25,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [kw, setKw] = useState('')
   const [message, setMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
     // console.log('effect');
@@ -40,11 +46,23 @@ const App = () => {
     // if exists a duplicate name, confirm about update an existing person's number
     if (duplicate.length !== 0) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        personService.update(duplicate[0].id, personObject)
+        const id = duplicate[0].id
+        personService.update(id, personObject)
           .then(returnedPerson => {
-            setPersons(persons.map(p => p.id !== duplicate[0].id ? p : returnedPerson))
+            setPersons(persons.map(p => p.id !== id ? p : returnedPerson))
             setMessage(`Added ${newName}`)
             setTimeout(() => { setMessage(null) }, 5000)
+          })
+          .catch(error => {
+            const err = `Information of ${newName} has already been already removed from server`
+            console.log(err)
+            setIsError(true)
+            setMessage(err)
+            setTimeout(() => {
+              setIsError(false)
+              setMessage(null)
+            }, 5000)
+            setPersons(persons.filter(p => p.id !== id))
           })
       }
     } else { // if no duplicate, create a new person with a number
@@ -76,7 +94,7 @@ const App = () => {
     <>
       <h2>Phonebook</h2>
 
-      <Notification message={message} />
+      <Notification message={message} isError={isError} />
 
       <Filter kw={kw} setKw={setKw} />
 
