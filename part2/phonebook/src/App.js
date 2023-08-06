@@ -21,20 +21,27 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const duplicate = persons.filter(p => p.name.toLowerCase() === newName.toLowerCase()).length !== 0
-    if (duplicate) {
-      return alert(`${newName} is already added to phonebook`)
-    }
-
     const personObject = { name: newName, number: newNumber }
-    personService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
-        setKw('')
-      })
+
+    // check whether duplicate person's name exists
+    const duplicate = persons.filter(p => p.name.toLowerCase() === newName.toLowerCase())
+
+    // if exists a duplicate name, confirm about update an existing person's number
+    if (duplicate.length !== 0) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        personService.update(duplicate[0].id, personObject)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== duplicate[0].id ? p : returnedPerson))
+          })
+      }
+    } else { // if no duplicate, create a new person with a number
+      personService
+        .create(personObject)
+        .then(returnedPerson => setPersons(persons.concat(returnedPerson)))
+    }
+    setNewName('')
+    setNewNumber('')
+    setKw('')
   }
 
   const handleDelete = person => {
@@ -65,4 +72,4 @@ const App = () => {
   );
 }
 
-export default App;
+export default App
