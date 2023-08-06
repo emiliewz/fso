@@ -1,31 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-
-// const Notification = ({ msg }) => {
-//   if (msg === null) {
-//     return null
-//   }
-
-//   return <p>{msg}</p>
-// }
-
-const Country = ({ country }) => {
-  return (
-    <>
-      <h1>{country.name.common}</h1>
-      <p>
-        capital {country.capital}
-        <br />
-        area {country.area}
-      </p>
-      <h3>languages:</h3>
-      <ul>
-        {Object.values(country.languages).map(l => <li key={l}>{l}</li>)}
-      </ul>
-      <p style={{ fontSize: '200px', width: '100%', margin: 0, padding: 0 }}>{country.flag}</p >
-    </>
-  )
-}
+import Country from "./components/Country"
+import Display from "./components/Display"
 
 const App = () => {
   const [search, setSearch] = useState('')
@@ -40,17 +16,26 @@ const App = () => {
   const handleChange = e => {
     const filteredCountries = countries.filter(c => c.name.official.toLowerCase().includes(e.target.value.toLowerCase()))
     setSearch(e.target.value)
-    setResult(filteredCountries)
+    setResult(filteredCountries.map(c => {
+      return { ...c, show: false }
+    }))
   }
+
+  const handleShow = c => setResult(result.map(n =>
+    n.name.official !== c.name.official
+      ? n
+      : { ...c, show: !c.show }
+  ))
+
+  const display = result.length > 10 ? <p>Too many matches, specify another filter</p>
+    : result.length > 1 ? <Display result={result} handleShow={handleShow} />
+      : result.length === 1 ? <Country country={result[0]} />
+        : null
 
   return (
     <>
       find countries <input value={search} onChange={handleChange} />
-      {result.length > 10 ? <p>Too many matches, specify another filter</p>
-        : result.length > 1 ? result.map(c => <p key={c.name.official}>{c.name.common}</p>)
-          : result.length === 1 ? <Country country={result[0]} />
-            : null
-      }
+      {display}
     </>
   )
 }
