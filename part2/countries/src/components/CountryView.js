@@ -31,9 +31,8 @@ const CountryView = ({ country }) => {
         {Object.values(country.languages).map(l => <li key={l}>{l}</li>)}
       </ul>
       <p style={{ fontSize: '200px', width: '100%', margin: 0 }}>{country.flag}</p >
-      
-      <h2 style={{ marginTop: 0 }}>Weather in {country.capital}</h2>
 
+      <h2 style={{ marginTop: 0 }}>Weather in {country.capital}</h2>
       <p>temperature {weather.main.temp} Celcius</p>
       <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={`${weather.weather[0].description} weather icon`} />
       <p>wind {weather.wind.speed} m/s</p>
