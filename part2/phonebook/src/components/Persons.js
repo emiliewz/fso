@@ -5,7 +5,7 @@ const Persons = ({ persons, handleClick }) => {
       {persons.map(person =>
         <p key={person.name}>
           {`${person.name} ${person.number} `}
-          <button onClick={() => handleClick(person.id)}>delete</button>
+          <button onClick={() => handleClick(person)}>delete</button>
         </p>
       )}
     </>

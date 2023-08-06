@@ -37,9 +37,11 @@ const App = () => {
       })
   }
 
-  const handleDelete = id => {
-    personService.delete(id)
-    setPersons(persons.filter(p => p.id !== id))
+  const handleDelete = person => {
+    if (window.confirm(`Delete ${person.name}`)) {
+      personService.delete(person.id)
+      setPersons(persons.filter(p => p.id !== person.id))
+    }
   }
 
   const filteredPersons = kw
