@@ -47,6 +47,14 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
+  const duplicate = persons.find(p => p.name.toLowerCase() === body.name.toLowerCase())
+
+  if (duplicate) {
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
   const person = {
     // ...body
     id: Math.floor(Math.random() * 10000000000),
