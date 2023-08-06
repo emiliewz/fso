@@ -33,7 +33,13 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setKw('')
       })
+  }
+
+  const handleDelete = id => {
+    personService.delete(id)
+    setPersons(persons.filter(p => p.id !== id))
   }
 
   const filteredPersons = kw
@@ -52,7 +58,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} handleClick={handleDelete} />
     </>
   );
 }
