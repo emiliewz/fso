@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import CountryView from "./components/CountryView"
 import Country from "./components/Country"
-import Display from "./components/Display"
 
 const App = () => {
   const [search, setSearch] = useState('')
@@ -28,8 +28,8 @@ const App = () => {
   ))
 
   const display = result.length > 10 ? <p>Too many matches, specify another filter</p>
-    : result.length > 1 ? <Display result={result} handleShow={handleShow} />
-      : result.length === 1 ? <Country country={result[0]} />
+    : result.length > 1 ? <Country result={result} handleShow={handleShow} />
+      : result.length === 1 ? <CountryView country={result[0]} />
         : null
 
   return (
