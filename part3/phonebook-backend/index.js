@@ -4,10 +4,12 @@ const app = express()
 app.use(express.json())
 
 const morgan = require('morgan')
-
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
-
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+const cors = require('cors')
+app.use(cors())
+// app.use(express.static('build'))
 
 let persons = [
   {
@@ -70,7 +72,7 @@ app.post('/api/persons', (request, response) => {
 
   persons = persons.concat(person)
 
-  response.json(persons)
+  response.json(person)
 })
 
 app.get('/api/persons/:id', (request, response) => {
