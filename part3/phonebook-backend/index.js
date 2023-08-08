@@ -8,6 +8,16 @@ const Person = require('./models/person')
 const morgan = require('morgan')
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
 const unKnownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
@@ -67,9 +77,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 
 app.use(unKnownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT
-
 app.listen(PORT, () =>
   console.log(`Server running on ${PORT}`)
 )
