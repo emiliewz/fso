@@ -31,8 +31,12 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/info', (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${new Date().toUTCString()}</p>`)
+app.get('/info', (request, response, next) => {
+  Person.find({}).then(returnedPerson => {
+    response.send(`<p>Phonebook has info for ${returnedPerson.length} people</p><p>${new Date().toUTCString()}</p>`)
+  })
+    .catch(error => next(error))
+
 })
 
 app.get('/api/persons', (request, response) => {
@@ -50,11 +54,13 @@ app.post('/api/persons', (request, response, next) => {
     })
   }
 
-  Person.find({ name: body.name }).then(returnedPerson => {
-    if (returnedPerson) {
-      return response.redirect(`/api/persons/${returnedPerson.id}`)
-    }
-  }).catch(error => next(error))
+  Person.find({ name: body.name })
+    .then(returnedPerson => {
+      if (returnedPerson) {
+        return response.redirect(`/api/persons/${returnedPerson.id}`)
+      }
+    })
+    .catch(error => next(error))
 
   const person = new Person({
     name: body.name,
@@ -66,10 +72,16 @@ app.post('/api/persons', (request, response, next) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
