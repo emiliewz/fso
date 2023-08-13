@@ -68,10 +68,20 @@ const App = () => {
     } else { // if no duplicate, create a new person with a number
       personService
         .create(personObject)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson))
           setMessage(`Added ${newName}`)
-          setTimeout(() => { setMessage(null) }, 5000)
+          setTimeout(() => setMessage(null), 5000)
+        })
+        .catch(error => {
+          // this is the way to access the error message
+          console.log(error.response.data.error)
+          setIsError(true)
+          setMessage(error.response.data.error)
+          setTimeout(() => {
+            setIsError(false)
+            setMessage(null)
+          }, 5000)
         })
     }
     setNewName('')
