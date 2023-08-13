@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 if (process.argv.length !== 3 && process.argv.length !== 5) {
-  console.log('give password or password with person and number as argument');
+  console.log('give password or password with person and number as argument')
   process.exit(1)
 }
 
