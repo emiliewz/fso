@@ -9,15 +9,17 @@ const totalLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-  if (blogs.length === 0) {
-    return null
-  } else {
-    const { title, author, likes, ...rest } = blogs.reduce((a, b) => a.likes >= b.likes ? a : b)
-    return { title, author, likes }
-  }
+  if (blogs.length === 0) return null
+
+  const { title, author, likes, ...rest } = blogs.reduce((a, b) => a.likes >= b.likes ? a : b)
+
+  return { title, author, likes }
 }
 
 const mostBlogs = (blogs) => {
+
+  if (blogs.length === 0) return null
+
   // group blogs by author
   const totalBlogs = _.groupBy(blogs, _.iteratee('author'))
   // convert object to array and compare elements array's length, to get the array of most blogs
