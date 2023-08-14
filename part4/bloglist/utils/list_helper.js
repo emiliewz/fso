@@ -28,9 +28,25 @@ const mostBlogs = (blogs) => {
   return { author: most[0]['author'], blogs: most.length }
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) return null
+
+  const totalBlogs = _.groupBy(blogs, _.iteratee('author'))
+
+  const totalLikes = _.values(totalBlogs).map(a => a.length === 1
+    ? { author: a[0].author, likes: a[0].likes }
+    : { author: a[0].author, likes: a.reduce((b, c) => b + c.likes, 0) }
+  )
+
+  const result = totalLikes.reduce((a, b) => a.likes >= b.likes ? a : b)
+
+  return result
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
