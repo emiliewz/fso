@@ -86,3 +86,25 @@ describe('total likes', () => {
     expect(result).toBe(36)
   })
 })
+
+describe('favorite blog', () => {
+  test('of empty list is null', () => {
+    expect(listHelper.favoriteBlog([])).toBe(null)
+  })
+
+  test('when list has only one blog, equals that blog', () => {
+    expect(listHelper.favoriteBlog(listWithOneBlog)).toEqual({
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      likes: 5
+    })
+  })
+
+  test('of a bigger list, is calculated right', () => {
+    expect(listHelper.favoriteBlog(blogs)).toEqual({
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      likes: 12
+    })
+  })
+})
