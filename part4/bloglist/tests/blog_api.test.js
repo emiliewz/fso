@@ -14,14 +14,17 @@ beforeEach(async () => {
   await Promise.all(promiseArray)
 })
 
-test('blogs are returned as json', async () => {
-  await api.get('/api/blogs')
+test('blogs are returned the correct amount of blogs posts as json', async () => {
+  const blogsAtStart = await api.get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
+
+  expect(blogsAtStart.body).toHaveLength(helper.blogs.length)
 }, 100000)
 
 test('the unique identifier property of the blog posts is named id', async () => {
   const blogs = await api.get('/api/blogs')
+
   expect(blogs.body[0].id).toBeDefined()
 })
 
