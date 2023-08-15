@@ -18,7 +18,7 @@ describe('total likes', () => {
   })
 
   test('of a bigger list, is calculated right', () => {
-    const result = listHelper.totalLikes(listHelper.blogs)
+    const result = listHelper.totalLikes(listHelper.initialBlogs)
     expect(result).toBe(36)
   })
 })
@@ -37,7 +37,7 @@ describe('favorite blog', () => {
   })
 
   test('of a bigger list, is calculated right', () => {
-    expect(listHelper.favoriteBlog(listHelper.blogs)).toEqual({
+    expect(listHelper.favoriteBlog(listHelper.initialBlogs)).toEqual({
       title: 'Canonical string reduction',
       author: 'Edsger W. Dijkstra',
       likes: 12
@@ -59,7 +59,7 @@ describe('most blogs', () => {
   })
 
   test('of a bigger list, is calculated right', () => {
-    expect(listHelper.mostBlogs(listHelper.blogs))
+    expect(listHelper.mostBlogs(listHelper.initialBlogs))
       .toEqual({
         author: 'Robert C. Martin',
         blogs: 3
@@ -81,7 +81,7 @@ describe('most likes', () => {
   })
 
   test('of a bigger list, is calculated right', () => {
-    expect(listHelper.mostLikes(listHelper.blogs))
+    expect(listHelper.mostLikes(listHelper.initialBlogs))
       .toEqual({
         author: 'Edsger W. Dijkstra',
         likes: 17

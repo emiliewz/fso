@@ -1,6 +1,7 @@
 var _ = require('lodash')
+const Blog = require('../models/blog')
 
-const blogs = [
+const initialBlogs = [
   {
     _id: '5a422a851b54a676234d17f7',
     title: 'React patterns',
@@ -105,12 +106,18 @@ const mostLikes = (blogs) => {
   return result
 }
 
+const blogsInDb = async () => {
+  const blogs = await Blog.find({})
+  return blogs.map(blog => blog.toJSON())
+}
+
 module.exports = {
-  blogs,
+  initialBlogs,
   listWithOneBlog,
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostLikes
+  mostLikes,
+  blogsInDb,
 }
