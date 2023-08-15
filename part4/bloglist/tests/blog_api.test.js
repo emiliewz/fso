@@ -65,6 +65,27 @@ test('if the likes property is missing from the request, it will default to the 
   expect(returnedBlog.body.likes).toBe(0)
 })
 
+test.only('if the title or url properties are missing from the request, responds with 400 Bad Request', async () => {
+  let newBlog = {
+    author: 'author',
+    url: 'url',
+    likes: 2
+  }
+
+  await api.post('/api/blogs').send(newBlog).expect(400)
+
+  newBlog = {
+    title: 'title',
+    author: 'author',
+    likes: 2
+  }
+
+  await api.post('/api/blogs').send(newBlog).expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
 
 
 afterAll(async () => {
