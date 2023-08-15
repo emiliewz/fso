@@ -65,7 +65,7 @@ test('if the likes property is missing from the request, it will default to the 
   expect(returnedBlog.body.likes).toBe(0)
 })
 
-test.only('if the title or url properties are missing from the request, responds with 400 Bad Request', async () => {
+test('if the title or url properties are missing from the request, responds with 400 Bad Request', async () => {
   let newBlog = {
     author: 'author',
     url: 'url',
@@ -86,7 +86,40 @@ test.only('if the title or url properties are missing from the request, responds
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
 
+test('delete blog with a valid id', async () => {
 
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+  const titles = blogsAtEnd.map(blog => blog.title)
+
+  expect(titles).not.toContain(blogToDelete.title)
+})
+
+test.only('update a valid blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+
+  const newBlog = {
+    ...blogToUpdate,
+    likes: blogToUpdate.likes + 1
+  }
+
+  const updatedBlog = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(newBlog)
+    .expect(200)
+
+  expect(updatedBlog.body.likes).toBe(blogToUpdate.likes + 1)
+})
 
 afterAll(async () => {
   await mongoose.connection.close()
