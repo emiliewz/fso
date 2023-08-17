@@ -6,9 +6,9 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NGRkNGEwZjdiODliYTBiMTNkYjk0NjkiLCJpYXQiOjE2OTIyNDgyNjEsImV4cCI6MTY5MjI1MTg2MX0.uNpKEYaGqLJWvl9nV5w59B9-A3A3oQIP-T2k8t51hNw
 
 {
-  "title": "title5",
-  "author": "author5",
-  "url": "url5",
-  "likes": 9,
+  "title": "title6",
+  "author": "author6",
+  "url": "url6",
+  "likes": 10,
   "userId": "64dda061a2112fd409cfba59" 
 }
