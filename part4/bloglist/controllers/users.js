@@ -11,6 +11,10 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
 
+  if (password === undefined || password?.length < 3) {
+    return response.status(400).json({ error: 'password must be at least 3 characters long' })
+  }
+
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
 
@@ -18,9 +22,9 @@ usersRouter.post('/', async (request, response) => {
     username, name, passwordHash
   })
 
-  const savedUser = await user.save()
+  const returnedUser = await user.save()
 
-  response.status(201).json(savedUser)
+  response.status(201).json(returnedUser)
 })
 
 module.exports = usersRouter

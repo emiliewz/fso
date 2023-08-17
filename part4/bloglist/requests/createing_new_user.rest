@@ -5,15 +5,21 @@ POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "username": "hellas",
+  "username": "h212312",
   "name":"Arto Hellas",
-  "password": "123456"
+  "password": "1"
 }
 
-{
-  "username": "mluukkai",
-  "name":"Matti Luukkainen",
-  "password": "12345678"
-}
+# {
+#   "username": "hellas",
+#   "name":"Arto Hellas",
+#   "password": "123456"
+# }
+
+# {
+#   "username": "mluukkai",
+#   "name":"Matti Luukkainen",
+#   "password": "12345678"
+# }
 
 
