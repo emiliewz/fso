@@ -39,11 +39,24 @@ describe('addition of a new blog', () => {
       author: 'author',
       url: 'url',
       likes: 5,
+      userId: '64de472a4527a597117affd3'
     }
+
+    const userForLogin = {
+      username: 'root',
+      password: 'sekret'
+    }
+
+    const loginResult = await api
+      .post('/api/login')
+      .send(userForLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(loginResult.body.token, { type: 'bearer' })
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -54,6 +67,38 @@ describe('addition of a new blog', () => {
     expect(titles).toContain('title')
   })
 
+  test('fails with status code 401 if a token is not provided', async () => {
+    const newBlog = {
+      title: 'title',
+      author: 'author',
+      url: 'url',
+      likes: 5,
+      userId: '64de472a4527a597117affd3'
+    }
+
+    const userForLogin = {
+      username: 'root',
+      password: 'sekret'
+    }
+
+    await api
+      .post('/api/login')
+      .send(userForLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const result = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('invalid token')
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
   test('likes property default to 0 if missing', async () => {
     const newBlog = {
       title: 'title',
@@ -61,10 +106,23 @@ describe('addition of a new blog', () => {
       url: 'url'
     }
 
+    const userForLogin = {
+      username: 'root',
+      password: 'sekret'
+    }
+
+    const loginResult = await api
+      .post('/api/login')
+      .send(userForLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const returnedBlog = await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(loginResult.body.token, { type: 'bearer' })
       .expect(201)
+
     expect(returnedBlog.body.likes).toBe(0)
   })
 
@@ -75,9 +133,21 @@ describe('addition of a new blog', () => {
       likes: 2
     }
 
+    const userForLogin = {
+      username: 'root',
+      password: 'sekret'
+    }
+
+    const loginResult = await api
+      .post('/api/login')
+      .send(userForLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(loginResult.body.token, { type: 'bearer' })
       .expect(400)
 
     newBlog = {
@@ -89,6 +159,7 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(loginResult.body.token, { type: 'bearer' })
       .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -100,19 +171,44 @@ describe('addition of a new blog', () => {
 describe('deletion of a blog', () => {
   test('succeeds with status code 204 if id is valid', async () => {
     const blogsAtStart = await helper.blogsInDb()
-    const blogToDelete = blogsAtStart[0]
+
+    const newBlog = {
+      title: 'title',
+      author: 'author',
+      url: 'url',
+      likes: 5,
+      userId: '64de472a4527a597117affd3'
+    }
+
+    const userForLogin = {
+      username: 'root',
+      password: 'sekret'
+    }
+
+    const loginResult = await api
+      .post('/api/login')
+      .send(userForLogin)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const result = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .auth(loginResult.body.token, { type: 'bearer' })
+      .expect(201)
 
     await api
-      .delete(`/api/blogs/${blogToDelete.id}`)
+      .delete(`/api/blogs/${result.body.id}`)
+      .auth(loginResult.body.token, { type: 'bearer' })
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
 
     const titles = blogsAtEnd.map(blog => blog.title)
 
-    expect(titles).not.toContain(blogToDelete.title)
+    expect(titles).not.toContain('title')
   })
 })
 
