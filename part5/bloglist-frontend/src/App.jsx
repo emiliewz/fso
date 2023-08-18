@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -9,6 +10,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -42,7 +44,8 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setIsError(true)
+      setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -81,12 +84,18 @@ const App = () => {
 
   const handleAddNewNote = async (event) => {
     event.preventDefault()
-
     try {
-      await blogService.create({ title, author, url })
-      setBlogs(blogs.concat({ title, author, url }))
+      const returnedBlog = await blogService.create({ title, author, url })
+      setBlogs(blogs.concat(returnedBlog))
+      setErrorMessage(`a new blog ${title} by ${author} added`)
+      setTimeout(() => setErrorMessage(null), 5000)
     } catch (exception) {
-      console.log('error adding')
+      setErrorMessage('error adding')
+      setIsError(true)
+      setTimeout(() => {
+        setErrorMessage(null)
+        setIsError(false)
+      }, 5000)
     }
     setTitle('')
     setAuthor('')
@@ -122,19 +131,18 @@ const App = () => {
 
   return (
     < div >
-      {errorMessage}
+      {user ? <h2>blogs</h2> : <h2>log in to application</h2>}
+      <Notification message={errorMessage} isError={isError} />
       {!user && <div>
-        <h2>log in to application</h2>
         {loginForm()}</div>}
       {user && <>
-        <h2>blogs</h2>
-        <p>{user.name} logged in</p>
-        <form onSubmit={handleLogout}>
-          <button type='submit'>logout</button>
-        </form>
+        <p>{user.name} logged in
+          <button type='submit' onClick={handleLogout}>logout</button>
+        </p>
         {addNewNotesForm()}
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+        {blogs.map(blog => {
+          return <Blog key={blog.id} blog={blog} />
+        }
         )}
       </>}
     </div >
