@@ -13,13 +13,14 @@ const Blog = ({ blog }) => {
 
   return (
     <div style={blogStyle}>
-      {blog.title}&nbsp;
+      {blog.title} {blog.author}&nbsp;
       {showDetails ?
         <>
           <button onClick={() => setShowDetails(false)}>hide</button><br />
           {blog.url} <br />
-          likes {blog.likes} <br />
-          {blog.author}
+          likes {blog.likes}&nbsp;
+          <button>likes</button><br />
+          {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}
         </>
         : <button onClick={() => setShowDetails(true)}>view</button>
       }
