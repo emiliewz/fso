@@ -16,14 +16,14 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
     <div style={blogStyle}>
       {blog.title} {blog.author}&nbsp;
       {showDetails ?
-        <>
+        <div className='blogDetails'>
           <button onClick={() => setShowDetails(false)}>hide</button><br />
           {blog.url} <br />
           likes {blog.likes}&nbsp;
           <button onClick={() => increaseLikes(blog)}>likes</button><br />
-          {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}<br />
+          {/* {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}<br /> */}
           <button onClick={() => removeBlog(blog)}>remove</button>
-        </>
+        </ div>
         : <button onClick={() => setShowDetails(true)}>view</button>
       }
     </div >
