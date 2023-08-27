@@ -126,6 +126,8 @@ const App = () => {
     </Togglable>
   )
 
+  const showSortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+
   return (
     < div >
       {user ? <h2>blogs</h2> : <h2>log in to application</h2>}
@@ -137,7 +139,7 @@ const App = () => {
           <button type='submit' onClick={handleLogout}>logout</button>
         </p>
         {addNewBlogsForm()}
-        {blogs.map(b => {
+        {showSortedBlogs.map(b => {
           return <Blog key={b.id} blog={b} increaseLikes={addLikes} />
         }
         )}
