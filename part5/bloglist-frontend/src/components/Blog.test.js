@@ -37,7 +37,7 @@ describe('<Blog />', () => {
     const user = userEvent.setup()
     const button = screen.getByText('view')
     await user.click(button)
-    screen.debug()
+
     const div = container.querySelector('.blogDetails')
     expect(div).not.toHaveStyle('display:none')
   })
