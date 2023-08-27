@@ -9,8 +9,6 @@ import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isError, setIsError] = useState(false)
@@ -32,18 +30,14 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async (credentials) => {
     try {
-      const user = await loginService.login({ username, password })
-
+      const user = await loginService.login(credentials)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       setIsError(true)
       setErrorMessage('wrong username or password')
@@ -52,30 +46,6 @@ const App = () => {
       }, 5000)
     }
   }
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type='text'
-          value={username}
-          name='Username'
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type='password'
-          value={password}
-          name='Password'
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type='submit' >login</button>
-    </form>
-  )
 
   const handleLogout = (event) => {
     event.preventDefault()
@@ -116,7 +86,7 @@ const App = () => {
         setErrorMessage(null)
         setIsError(false)
       }, 5000)
-      setNotes(blogs.filter(b => b.id !== blog.id))
+      setBlogs(blogs.filter(b => b.id !== blog.id))
     }
   }
 
@@ -149,8 +119,7 @@ const App = () => {
     < div >
       {user ? <h2>blogs</h2> : <h2>log in to application</h2>}
       <Notification message={errorMessage} isError={isError} />
-      {!user && <div>
-        {loginForm()}</div>}
+      {!user && <LoginForm createLogin={handleLogin} />}
       {user && <>
         <p>{user.name} logged in
           <button type='submit' onClick={handleLogout}>logout</button>
