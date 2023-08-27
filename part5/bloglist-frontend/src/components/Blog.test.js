@@ -6,15 +6,22 @@ import Blog from './Blog'
 
 describe('<Blog />', () => {
   let container
+  let increaseLikes
+  let removeBlog
 
   beforeEach(() => {
+    increaseLikes = jest.fn()
+    removeBlog = jest.fn()
     const blog = {
       title: 'today is a sunny day',
       author: 'Emilie',
       URL: 'localhost: 3157',
-      likes: 2
+      likes: 2,
+      user: {
+        name: 'Zhang'
+      }
     }
-    container = render(<Blog blog={blog} />).container
+    container = render(<Blog blog={blog} increaseLikes={increaseLikes} removeBlog={removeBlog} />).container
   })
 
   test('<Blog /> renders the blog title and author, without render its URL or number of likes', async () => {
@@ -30,10 +37,21 @@ describe('<Blog />', () => {
     const user = userEvent.setup()
     const button = screen.getByText('view')
     await user.click(button)
-
+    screen.debug()
     const div = container.querySelector('.blogDetails')
     expect(div).not.toHaveStyle('display:none')
   })
 
+  test('<Blog /> calls onClick', async () => {
+    const user = userEvent.setup()
+
+    await user.click(screen.getByText('view'))
+
+    const button = screen.getByText('likes')
+    await user.click(button)
+    await user.click(button)
+
+    expect(increaseLikes.mock.calls).toHaveLength(2)
+  })
 })
 

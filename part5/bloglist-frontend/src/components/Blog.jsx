@@ -20,8 +20,8 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
           <button onClick={() => setShowDetails(false)}>hide</button><br />
           {blog.url} <br />
           likes {blog.likes}&nbsp;
-          <button onClick={() => increaseLikes(blog)}>likes</button><br />
-          {/* {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}<br /> */}
+          <button onClick={() => increaseLikes(blog)} className='likes'>likes</button><br />
+          {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}<br />
           <button onClick={() => removeBlog(blog)}>remove</button>
         </ div>
         : <button onClick={() => setShowDetails(true)}>view</button>
@@ -32,8 +32,8 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  // increaseLikes: PropTypes.func.isRequired,
-  // removeBlog: PropTypes.func.isRequired
+  increaseLikes: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired
 }
 
 export default Blog
