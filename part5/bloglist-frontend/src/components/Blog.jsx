@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, increaseLikes }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const blogStyle = {
@@ -19,7 +19,7 @@ const Blog = ({ blog }) => {
           <button onClick={() => setShowDetails(false)}>hide</button><br />
           {blog.url} <br />
           likes {blog.likes}&nbsp;
-          <button>likes</button><br />
+          <button onClick={() => increaseLikes(blog)}>likes</button><br />
           {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}
         </>
         : <button onClick={() => setShowDetails(true)}>view</button>

@@ -5,6 +5,7 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -99,6 +100,26 @@ const App = () => {
     }
   }
 
+  const addLikes = async (blog) => {
+    const newBlog = {
+      ...blog,
+      likes: blog.likes + 1
+    }
+    try {
+      const returnedBlog = await blogService.update(blog.id, newBlog)
+      setBlogs(blogs.map(b => b.id !== blog.id ? b : returnedBlog))
+    }
+    catch (exception) {
+      setIsError(true)
+      setErrorMessage('error liking')
+      setTimeout(() => {
+        setErrorMessage(null)
+        setIsError(false)
+      }, 5000)
+      setNotes(blogs.filter(b => b.id !== blog.id))
+    }
+  }
+
   const addNewBlogsForm = () => (
     <Togglable buttonLabel='new note' ref={blogFormRef}>
       <BlogForm createBlog={addBlog} />
@@ -116,8 +137,8 @@ const App = () => {
           <button type='submit' onClick={handleLogout}>logout</button>
         </p>
         {addNewBlogsForm()}
-        {blogs.map(blog => {
-          return <Blog key={blog.id} blog={blog} />
+        {blogs.map(b => {
+          return <Blog key={b.id} blog={b} increaseLikes={addLikes} />
         }
         )}
       </>}
