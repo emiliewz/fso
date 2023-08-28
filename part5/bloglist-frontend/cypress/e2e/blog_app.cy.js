@@ -71,13 +71,40 @@ describe('Blog app', function () {
         cy.contains('remove').click()
       })
 
-      it.only('a blog delete button can not be saw from another user', function () {
+      it('a blog delete button can not be saw from another user', function () {
         cy.contains('logout').click()
         cy.createUser({ name: 'new user', username: 'user2', password: 'user2pwd' })
         cy.login({ username: 'user2', password: 'user2pwd' })
         cy.contains('this is another blog').contains('view').click()
 
         cy.contains('this is another blog').should('not.contain', 'remove')
+      })
+    })
+
+    describe('and several blogs exists', function () {
+      beforeEach(function () {
+        cy.createBlog({ title: 'The title with the most likes', author: 'cypress', url: 'localhost:5173' })
+        cy.createBlog({ title: 'The title with the second most likes', author: 'cypress', url: 'localhost:5173' })
+        cy.createBlog({ title: 'The title with the third most likes', author: 'cypress', url: 'localhost:5173' })
+      })
+
+      it('blogs are ordered according to likes', () => {
+        cy.contains('The title with the most likes').as('mostLikes')
+        cy.get('@mostLikes').contains('view').click()
+        cy.get('@mostLikes').contains('likes').click()
+        cy.wait(500)
+        cy.get('@mostLikes').contains('likes').click()
+        cy.wait(500)
+        cy.get('@mostLikes').contains('likes').click()
+        cy.wait(500)
+
+        cy.contains('The title with the second most likes').as('secondMostLikes')
+        cy.get('@secondMostLikes').contains('view').click()
+        cy.get('@secondMostLikes').contains('likes').click()
+
+        cy.get('.blog').eq(0).should('contain', 'The title with the most likes')
+        cy.get('.blog').eq(1).should('contain', 'The title with the second most likes')
+        cy.get('.blog').eq(2).should('contain', 'The title with the third most likes')
       })
     })
   })

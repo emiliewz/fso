@@ -19,7 +19,7 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       {blog.title} {blog.author}&nbsp;
       {showDetails ?
         <div className='blogDetails'>
