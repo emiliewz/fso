@@ -44,7 +44,7 @@ describe('Blog app', function () {
       cy.login({ username: 'user1', password: 'user1pwd' })
     })
 
-    it.only('A blog can be created', function () {
+    it('A blog can be created', function () {
       cy.contains('new blog').click()
 
       cy.get('#note-title').type('this is a new blog')
@@ -57,6 +57,24 @@ describe('Blog app', function () {
         .and('have.css', 'color', 'rgb(0, 128, 0)')
         .and('have.css', 'border-style', 'solid')
     })
+
+    describe('and a blog exists', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'this is another blog',
+          author: 'cypress',
+          url: 'localhost:5173'
+        })
+      })
+
+      it.only('a blog can be liked', function () {
+        cy.contains('this is another blog').contains('view').click()
+        cy.contains('likes').click()
+      })
+    })
+
+
+
   })
 
 })
