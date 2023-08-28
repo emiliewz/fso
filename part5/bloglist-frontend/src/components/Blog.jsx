@@ -12,6 +12,12 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
     marginBottom: 5
   }
 
+  const removeButton = () => {
+    if (JSON.parse(window.localStorage.getItem('loggedBlogappUser')).username === blog.user.username) {
+      return <button id='remove-button' onClick={() => removeBlog(blog)}>remove</button>
+    }
+  }
+
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}&nbsp;
@@ -22,7 +28,7 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
           likes {blog.likes}&nbsp;
           <button onClick={() => increaseLikes(blog)} className='likes'>likes</button><br />
           {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}<br />
-          <button onClick={() => removeBlog(blog)}>remove</button>
+          {removeButton()}
         </ div>
         : <button onClick={() => setShowDetails(true)}>view</button>
       }

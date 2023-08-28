@@ -1,13 +1,7 @@
 describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
-    const user = {
-      name: 'Emilie',
-      username: 'user1',
-      password: 'user1pwd'
-    }
-    cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user)
-    cy.visit('')
+    cy.createUser({ name: 'Emilie', username: 'user1', password: 'user1pwd' })
   })
 
   it('Login form is shown', function () {
@@ -72,11 +66,19 @@ describe('Blog app', function () {
         cy.contains('likes').click()
       })
 
-      it.only('a blog can be deleted by the user who created it', function () {
+      it('a blog can be deleted by the user who created it', function () {
         cy.contains('this is another blog').contains('view').click()
         cy.contains('remove').click()
       })
 
+      it.only('a blog delete button can not be saw from another user', function () {
+        cy.contains('logout').click()
+        cy.createUser({ name: 'new user', username: 'user2', password: 'user2pwd' })
+        cy.login({ username: 'user2', password: 'user2pwd' })
+        cy.contains('this is another blog').contains('view').click()
+
+        cy.contains('this is another blog').should('not.contain', 'remove')
+      })
     })
   })
 })
