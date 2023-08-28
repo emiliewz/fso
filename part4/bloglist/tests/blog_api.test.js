@@ -150,11 +150,12 @@ describe('blogs api', () => {
 
         const updatedBlog = await api
           .put(`/api/blogs/${blogToUpdate.id}`)
+          .set('Authorization', `Bearer ${token}`)
           .send(newBlog)
           .expect(200)
 
         expect(updatedBlog.body.likes).toBe(blogToUpdate.likes + 1)
-      })
+      })``
     })
   })
 

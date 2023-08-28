@@ -1,6 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const { blogsInDb } = require('../utils/list_helper')
 
 const { userExtractor } = require('../utils/middleware')
 
@@ -34,6 +33,21 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
+blogsRouter.put('/:id', userExtractor, async (request, response) => {
+  const { title, author, url, likes } = request.body
+  const user = request.user
+
+  if (!user) {
+    return response.status(401).json({ error: 'operation not permitted' })
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, {
+    title, author, url, likes
+  }, { new: true })
+
+  response.status(200).json(updatedBlog)
+})
+
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
 
@@ -50,15 +64,6 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   await blog.deleteOne()
 
   response.status(204).end()
-})
-
-blogsRouter.put('/:id', async (request, response) => {
-  const { title, url, author, likes } = request.body
-
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, {
-    title, author, url, likes
-  }, { new: true })
-  response.status(200).json(updatedBlog)
 })
 
 
