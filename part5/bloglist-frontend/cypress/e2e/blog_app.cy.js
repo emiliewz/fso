@@ -67,14 +67,16 @@ describe('Blog app', function () {
         })
       })
 
-      it.only('a blog can be liked', function () {
+      it('a blog can be liked', function () {
         cy.contains('this is another blog').contains('view').click()
         cy.contains('likes').click()
       })
+
+      it.only('a blog can be deleted by the user who created it', function () {
+        cy.contains('this is another blog').contains('view').click()
+        cy.contains('remove').click()
+      })
+
     })
-
-
-
   })
-
 })
