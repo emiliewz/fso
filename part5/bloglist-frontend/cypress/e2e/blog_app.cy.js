@@ -39,4 +39,24 @@ describe('Blog app', function () {
     })
   })
 
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'user1', password: 'user1pwd' })
+    })
+
+    it.only('A blog can be created', function () {
+      cy.contains('new blog').click()
+
+      cy.get('#note-title').type('this is a new blog')
+      cy.get('#note-author').type('Emilie')
+      cy.get('#note-url').type('localhost:5173')
+
+      cy.contains('create').click()
+      cy.get('html').should('contain', 'this is a new blog')
+      cy.get('.msg').should('contain', 'a new blog this is a new blog by Emilie added')
+        .and('have.css', 'color', 'rgb(0, 128, 0)')
+        .and('have.css', 'border-style', 'solid')
+    })
+  })
+
 })
