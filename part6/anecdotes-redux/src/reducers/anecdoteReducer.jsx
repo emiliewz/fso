@@ -34,7 +34,7 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export const voteForAnecdote = (id) => {
+export const voteFor = (id) => {
   return {
     type: 'VOTE',
     payload: { id }
