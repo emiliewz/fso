@@ -5,7 +5,7 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
   const anecdotes = useSelector(({ anecdotes, filter }) => {
     if (filter === 'ALL') return anecdotes
-    return anecdotes.filter(a => a.content.includes(filter))
+    return anecdotes.filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
   })
 
   const addVote = (id) => {
