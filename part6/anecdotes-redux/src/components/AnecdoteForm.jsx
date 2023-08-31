@@ -10,7 +10,7 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const anecdote = event.target.anecdote.value
     event.target.anecdote.value = ''
-    const newAnecdote = await anecdoteService.createAnecdote(anecdote)
+    const newAnecdote = await anecdoteService.createNew(anecdote)
     dispatch(createAnecdote(newAnecdote))
     dispatch(setNotification(`you add an anecdote '${anecdote}'`))
     setTimeout(() => dispatch(removeNotification()), 5000)
