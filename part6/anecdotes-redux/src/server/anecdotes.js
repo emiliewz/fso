@@ -14,10 +14,9 @@ const createNew = async (content) => {
 }
 
 const updateVotes = async (id) => {
-  const objectToUpdate = await axios.get(`${baseUrl}/${id}`).data
-  console.log(objectToUpdate)
+  const result = await axios.get(`${baseUrl}/${id}`)
+  const objectToUpdate = result.data
   const updatedObject = { ...objectToUpdate, votes: objectToUpdate.votes + 1 }
-  console.log(updatedObject)
   const response = await axios.put(`${baseUrl}/${id}`, updatedObject)
   return response.data
 }
