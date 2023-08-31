@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import axios from 'axios'
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -23,7 +24,7 @@ const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     createAnecdote(state, action) {
       const newAnecdote = asObject(action.payload)
@@ -39,9 +40,15 @@ const anecdoteSlice = createSlice({
       return state.map(a =>
         a.id !== id ? a : updatedAnecdote
       )
+    },
+    appendAnecdote(state, action) {
+      state.push(action.payload)
+    },
+    setAnecdotes(state, action) {
+      return action.payload
     }
   }
 })
 
-export const { createAnecdote, voteFor } = anecdoteSlice.actions
+export const { createAnecdote, voteFor, appendAnecdote, setAnecdotes } = anecdoteSlice.actions
 export default anecdoteSlice.reducer
