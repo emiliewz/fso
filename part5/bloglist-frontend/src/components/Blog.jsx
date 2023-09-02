@@ -27,7 +27,7 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
           {blog.url} <br />
           likes {blog.likes}&nbsp;
           <button onClick={() => increaseLikes(blog)} className='likes'>likes</button><br />
-          {blog.user.name ? blog.user.name : JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name}<br />
+          {blog.user && blog.user.name}
           {removeButton()}
         </ div>
         : <button onClick={() => setShowDetails(true)}>view</button>
