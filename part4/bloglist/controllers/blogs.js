@@ -25,10 +25,12 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     user: user._id
   })
 
-  const savedBlog = await blog.save()
+  let savedBlog = await blog.save()
 
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
+
+  savedBlog = await Blog.findById(savedBlog._id).populate('user')
 
   response.status(201).json(savedBlog)
 })
@@ -41,9 +43,11 @@ blogsRouter.put('/:id', userExtractor, async (request, response) => {
     return response.status(401).json({ error: 'operation not permitted' })
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, {
+  let updatedBlog = await Blog.findByIdAndUpdate(request.params.id, {
     title, author, url, likes
   }, { new: true })
+
+  updatedBlog = await Blog.findById(updatedBlog._id).populate('user')
 
   response.status(200).json(updatedBlog)
 })
