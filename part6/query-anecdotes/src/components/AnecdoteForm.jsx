@@ -6,7 +6,6 @@ const AnecdoteForm = ({ createAnecdote, sendNotification }) => {
     event.target.anecdote.value = ''
     createAnecdote.mutate({ content, votes: 0 })
     sendNotification('CREATE', content)
-
   }
 
   return (

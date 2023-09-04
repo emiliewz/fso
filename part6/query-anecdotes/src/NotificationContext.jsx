@@ -10,6 +10,8 @@ export const notificationReducer = (state, action) => {
       return `anecdote '${action.payload}' created`
     case 'CLEAR':
       return null
+    case 'ERROR':
+      return 'too sgort anecdote, must have length 5 or more'
     default:
       return state
   }

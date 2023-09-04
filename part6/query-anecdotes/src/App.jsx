@@ -20,7 +20,8 @@ const App = () => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData({ queryKey: ['anecdotes'] })
       queryClient.setQueryData({ queryKey: ['anecdotes'] }, anecdotes.concat(newAnecdote))
-    }
+    },
+    onError: () => sendNotification('ERROR')
   })
 
   const updateAnecdoteMutation = useMutation(updateAnecdote, {
