@@ -1,40 +1,24 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getAnecdotes, createAnecdote, updateAnecdote } from './request'
-import { useReducer } from 'react'
-import { notificationReducer } from './NotificationContext'
+import { getAnecdotes, updateAnecdote } from './request'
+import { useNotification } from './NotificationContext'
 
 const App = () => {
-  const [notification, notificationDispatch] = useReducer(notificationReducer, null)
-
-  const sendNotification = (type, payload) => {
-    notificationDispatch({ type, payload })
-    setTimeout(() => notificationDispatch({ type: 'CLEAR' }), 5000)
-  }
-
   const queryClient = useQueryClient()
-
-  const newAnecdoteMutation = useMutation({
-    mutationFn: createAnecdote,
-    onSuccess: (newAnecdote) => {
-      const anecdotes = queryClient.getQueryData({ queryKey: ['anecdotes'] })
-      queryClient.setQueryData({ queryKey: ['anecdotes'] }, anecdotes.concat(newAnecdote))
-    },
-    onError: () => sendNotification('ERROR')
-  })
+  const notify = useNotification()
 
   const updateAnecdoteMutation = useMutation(updateAnecdote, {
     onSuccess: (returnedAnecdote) => {
       const anecdotes = queryClient.getQueryData({ queryKey: ['anecdotes'] })
       queryClient.setQueryData({ queryKey: ['anecdotes'] }, anecdotes.map(a =>
         a.id !== returnedAnecdote.id ? a : returnedAnecdote))
+      notify(`anecdote '${returnedAnecdote.content}' voted`)
     }
   })
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
-    sendNotification('VOTE', anecdote.content)
   }
 
   const result = useQuery({
@@ -47,7 +31,7 @@ const App = () => {
   if (result.isError) {
     return <div>anecdote service not available due to problems in server</div>
   } else if (result.isLoading) {
-    return <div>loading data</div>
+    return <div>loading data...</div>
   }
 
   const anecdotes = result.data
@@ -56,8 +40,8 @@ const App = () => {
     <div>
       <h3>Anecdote app</h3>
 
-      <Notification notification={notification} />
-      <AnecdoteForm createAnecdote={newAnecdoteMutation} sendNotification={sendNotification} />
+      <Notification />
+      <AnecdoteForm />
 
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
