@@ -67,10 +67,13 @@ const CreateNew = ({ addNew, notify }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     addNew({
-      content: content.value, author: author.value, info: info.value, votes: 0
+      content: content.attr.value,
+      author: author.attr.value,
+      info: info.attr.value,
+      votes: 0
     })
     navigate('/')
-    notify(`a new anecdote ${content.value} created!`)
+    notify(`a new anecdote ${content.attr.value} created!`)
   }
 
   return (
@@ -78,13 +81,13 @@ const CreateNew = ({ addNew, notify }) => {
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          content <input {...content} />
+          content <input {...content.attr} />
         </div>
         <div>
-          author <input {...author} />
+          author <input {...author.attr} />
         </div>
         <div>
-          url for more info <input {...info} />
+          url for more info <input {...info.attr} />
         </div>
         <button>create</button>
         <button onClick={(event) => {
