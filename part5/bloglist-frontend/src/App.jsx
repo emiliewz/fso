@@ -10,8 +10,8 @@ import LoginForm from './components/LoginForm'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isError, setIsError] = useState(false)
+  const [info, setInfo] = useState({ message: null })
+
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -30,27 +30,33 @@ const App = () => {
     }
   }, [])
 
+  const notifyWith = (message, type = 'info') => {
+    setInfo({ message, type })
+
+    setTimeout(() => {
+      setInfo({ message: null })
+    }, 3000)
+  }
+
   const handleLogin = async (credentials) => {
     try {
       const user = await loginService.login(credentials)
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
+        'loggedBlogAppUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
       setUser(user)
+      notifyWith('Welcome!')
     } catch (exception) {
-      setIsError(true)
-      setErrorMessage('wrong username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      notifyWith('wrong username or password', 'error')
     }
   }
 
   const handleLogout = (event) => {
     event.preventDefault()
-    window.localStorage.removeItem('loggedBlogappUser')
+    window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
+    notifyWith('logged out')
   }
 
   const addBlog = async (blogObject) => {
@@ -58,35 +64,21 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      setErrorMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
-      setTimeout(() => setErrorMessage(null), 5000)
+      notifyWith(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
     } catch (exception) {
-      setIsError(true)
-      setErrorMessage('error adding')
-      setTimeout(() => {
-        setErrorMessage(null)
-        setIsError(false)
-      }, 5000)
+      notifyWith('error adding', 'error')
     }
   }
 
   const addLikes = async (blog) => {
-    const newBlog = {
-      ...blog,
-      likes: blog.likes + 1
-    }
+    const blogToUpdate = { ...blog, likes: blog.likes + 1 }
     try {
-      const returnedBlog = await blogService.update(blog.id, newBlog)
-      setBlogs(blogs.map(b => b.id !== blog.id ? b : returnedBlog))
+      const updatedBlog = await blogService.update(blog.id, blogToUpdate)
+      setBlogs(blogs.map(b => b.id !== blog.id ? b : updatedBlog))
+      notifyWith(`A like for the blog '${blog.title}' by '${blog.author}'`)
     }
     catch (exception) {
-      setIsError(true)
-      setErrorMessage('error liking')
-      setTimeout(() => {
-        setErrorMessage(null)
-        setIsError(false)
-      }, 5000)
-      setBlogs(blogs.filter(b => b.id !== blog.id))
+      notifyWith('error liking', 'error')
     }
   }
 
@@ -95,14 +87,10 @@ const App = () => {
       try {
         const returnedBlog = await blogService.deleteBlog(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
+        notifyWith(`The blog' ${blog.title}' by '${blog.author} removed`)
       }
       catch (exception) {
-        setIsError(true)
-        setErrorMessage('error deleting')
-        setTimeout(() => {
-          setErrorMessage(null)
-          setIsError(false)
-        }, 5000)
+        notifyWith('error deleting', 'error')
       }
     }
   }
@@ -118,7 +106,7 @@ const App = () => {
   return (
     < div >
       {user ? <h2>blogs</h2> : <h2>log in to application</h2>}
-      <Notification message={errorMessage} isError={isError} />
+      <Notification info={info} />
       {!user && <LoginForm createLogin={handleLogin} />}
       {user && <>
         <p>{user.name} logged in

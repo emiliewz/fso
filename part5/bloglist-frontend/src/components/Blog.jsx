@@ -13,7 +13,7 @@ const Blog = ({ blog, increaseLikes, removeBlog }) => {
   }
 
   const removeButton = () => {
-    if (JSON.parse(window.localStorage.getItem('loggedBlogappUser')).username === blog.user.username) {
+    if (JSON.parse(window.localStorage.getItem('loggedBlogAppUser')).username === blog.user.username) {
       return <button id='remove-button' onClick={() => removeBlog(blog)}>remove</button>
     }
   }

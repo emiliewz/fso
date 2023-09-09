@@ -1,62 +1,53 @@
-import React from "react";
-import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import Blog from "./Blog";
+import React from 'react'
+import '@testing-library/jest-dom'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
-describe("<Blog />", () => {
-  let container;
-  let increaseLikes;
-  let removeBlog;
+import Blog from './Blog'
+
+describe('<Blog />', () => {
+  const blog = {
+    title: 'today is a sunny day',
+    author: 'Emilie',
+    url: 'localhost: 3157',
+    likes: 2
+  }
+
+  const likeHandler = jest.fn()
 
   beforeEach(() => {
-    increaseLikes = jest.fn();
-    removeBlog = jest.fn();
-    const blog = {
-      title: "today is a sunny day",
-      author: "Emilie",
-      URL: "localhost: 3157",
-      likes: 2,
-      user: {
-        name: "Zhang",
-      },
-    };
-    container = render(
-      <Blog
-        blog={blog}
-        increaseLikes={increaseLikes}
-        removeBlog={removeBlog}
-      />,
-    ).container;
-  });
+    render(
+      <Blog blog={blog} remove={jest.fn()} canRemove={true} like={likeHandler} />
+    )
+  })
 
-  test("<Blog /> renders the blog title and author, without render its URL or number of likes", async () => {
-    const element = screen.getByText("today is a sunny day", { exact: false });
-    expect(element).toBeDefined();
-    expect(screen.getByText("Emilie", { exact: false })).toBeDefined();
+  test('<Blog /> renders only title and author by default', () => {
+    expect(screen.getByText(blog.title, { exact: false })).toBeDefined()
+    screen.getByText(blog.author, { exact: false })
 
-    expect(screen.queryByText("localhost: 3157", { exact: false })).toBeNull();
-    expect(screen.queryByText("likes", { exact: false })).toBeNull();
-  });
+    expect(screen.queryByText(blog.url, { exact: false })).toBeNull()
+    expect(screen.queryByText('likes', { exact: false })).toBeNull()
+  })
 
-  test("after clicking the button, url and number of likes are displayed", async () => {
-    const user = userEvent.setup();
-    const button = screen.getByText("view");
-    await user.click(button);
+  test('renders also details when asked to be shown', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('show')
+    await user.click(button)
 
-    const div = container.querySelector(".blogDetails");
-    expect(div).not.toHaveStyle("display:none");
-  });
+    screen.getByText(blog.url, { exact: false })
+    screen.getByText(`likes ${blog.likes}`, { exact: false })
+  })
 
-  test("<Blog /> calls onClick", async () => {
-    const user = userEvent.setup();
+  test('if liked twice, <Blog /> calls onClick twice', async () => {
+    const user = userEvent.setup()
 
-    await user.click(screen.getByText("view"));
+    const showButton = screen.getByText('show')
+    await user.click(showButton)
 
-    const button = screen.getByText("likes");
-    await user.click(button);
-    await user.click(button);
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
 
-    expect(increaseLikes.mock.calls).toHaveLength(2);
-  });
-});
+    expect(likeHandler.mock.calls).toHaveLength(2)
+  })
+})
