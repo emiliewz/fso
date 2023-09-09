@@ -1,9 +1,9 @@
-const router = require('express').Router()
+const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
 const { userExtractor } = require('../utils/middleware')
 
-router.get('/', async (request, response) => {
+blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})
     .populate('user', { username: 1, name: 1 })
@@ -11,7 +11,7 @@ router.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-router.post('/', userExtractor, async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
   const user = request.user
 
@@ -25,17 +25,17 @@ router.post('/', userExtractor, async (request, response) => {
     user: user._id
   })
 
-  let createdBlog = await blog.save()
+  let savedBlog = await blog.save()
 
-  user.blogs = user.blogs.concat(createdBlog._id)
+  user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  createdBlog = await Blog.findById(createdBlog._id).populate('user')
+  savedBlog = await Blog.findById(savedBlog._id).populate('user')
 
-  response.status(201).json(createdBlog)
+  response.status(201).json(savedBlog)
 })
 
-router.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {
   const { title, author, url, likes } = request.body
 
   let updatedBlog = await Blog.findByIdAndUpdate(request.params.id, {
@@ -46,10 +46,11 @@ router.put('/:id', async (request, response) => {
   response.json(updatedBlog)
 })
 
-router.delete('/:id', userExtractor, async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
+
   const blog = await Blog.findById(request.params.id)
-  console.log('blog', blog)
+
   if (!user || blog.user.toString() !== user.id.toString()) {
     return response.status(401).json({ error: 'operation not permitted' })
   }
@@ -64,4 +65,4 @@ router.delete('/:id', userExtractor, async (request, response) => {
 })
 
 
-module.exports = router
+module.exports = blogsRouter

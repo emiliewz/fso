@@ -17,12 +17,17 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    const user = storageService.loadUser()
-    setUser(user)
+    blogService.
+      getAll()
+      .then((blogs) => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    const loadedUser = storageService.loadUser()
+    if (loadedUser) {
+      setUser(loadedUser)
+      blogService.setToken(loadedUser.token)
+    }
   }, [])
 
   const notifyWith = (message, type = 'info') => {
@@ -36,8 +41,9 @@ const App = () => {
   const login = async (credentials) => {
     try {
       const user = await loginService.login(credentials)
-      setUser(user)
       storageService.saveUser(user)
+      blogService.setToken(user.token)
+      setUser(user)
       notifyWith('Welcome!')
     } catch (exception) {
       notifyWith('wrong username or password', 'error')
@@ -45,8 +51,8 @@ const App = () => {
   }
 
   const logout = (event) => {
-    setUser(null)
     storageService.removeUser()
+    setUser(null)
     notifyWith('logged out')
   }
 
