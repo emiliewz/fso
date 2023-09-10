@@ -9,12 +9,24 @@ import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 
+import { createNotice } from './reducers/noticeReducer'
+import { useDispatch, useSelector } from 'react-redux'
+
 const App = () => {
+  const dispatch = useDispatch()
+  const info = useSelector(state => state)
+
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState('')
-  const [info, setInfo] = useState({ message: null })
 
   const blogFormRef = useRef()
+
+  const notifyWith = (message, type = 'info') => {
+    dispatch(createNotice(message, type))
+    setTimeout(() => {
+      dispatch({ type: 'CLEAR' })
+    }, 3000)
+  }
 
   useEffect(() => {
     blogService.
@@ -29,14 +41,6 @@ const App = () => {
       blogService.setToken(loadedUser.token)
     }
   }, [])
-
-  const notifyWith = (message, type = 'info') => {
-    setInfo({ message, type })
-
-    setTimeout(() => {
-      setInfo({ message: null })
-    }, 3000)
-  }
 
   const login = async (credentials) => {
     try {
