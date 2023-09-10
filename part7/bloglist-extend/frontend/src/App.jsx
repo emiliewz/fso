@@ -9,22 +9,20 @@ import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 
-import { createNotice } from './reducers/noticeReducer'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { createInfo, clearInfo } from './reducers/infoReducer'
 
 const App = () => {
   const dispatch = useDispatch()
-  const info = useSelector(state => state)
-
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState('')
 
   const blogFormRef = useRef()
 
   const notifyWith = (message, type = 'info') => {
-    dispatch(createNotice(message, type))
+    dispatch(createInfo({ message, type }))
     setTimeout(() => {
-      dispatch({ type: 'CLEAR' })
+      dispatch(clearInfo())
     }, 3000)
   }
 
@@ -98,7 +96,7 @@ const App = () => {
     return (
       <div>
         <h2>log in to application</h2>
-        <Notification info={info} />
+        <Notification />
         <LoginForm login={login} />
       </div>
     )
@@ -109,7 +107,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification info={info} />
+      <Notification />
 
       <div>
         {user.name} logged in
