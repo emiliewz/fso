@@ -6,21 +6,19 @@ const infoSlice = createSlice({
   name: 'info',
   initialState,
   reducers: {
-    createInfo(state, action) {
+    setInfo(state, action) {
       return action.payload
-    },
-    clearInfo(state, action) {
-      return null
     }
   }
 })
 
-export const { createInfo, clearInfo } = infoSlice.actions
+export const { setInfo } = infoSlice.actions
 
 export const setNotification = (message, type = 'info') => {
   return async dispatch => {
-    dispatch(createInfo({ message, type }))
-    setTimeout(() => dispatch(clearInfo()), 3000)
+    dispatch(setInfo({ message, type }))
+    setTimeout(() =>
+      dispatch(setInfo(null)), 3000)
   }
 }
 

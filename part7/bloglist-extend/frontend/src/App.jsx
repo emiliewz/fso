@@ -11,6 +11,7 @@ import Notification from './components/Notification'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/infoReducer'
 import { setBlogs } from './reducers/blogSlice'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -49,28 +50,17 @@ const App = () => {
     dispatch(setNotification('logged out'))
   }
 
-  const like = async (blog) => {
-    const blogToUpdate = { ...blog, likes: blog.likes + 1 }
-    try {
-      const updatedBlog = await blogService.update(blogToUpdate)
-      dispatch(setNotification(`A like for the blog '${blog.title}' by '${blog.author}'`))
-      setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)))
-    } catch (exception) {
-      dispatch(setNotification('error liking', 'error'))
-    }
-  }
-
-  const remove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      try {
-        await blogService.remove(blog.id)
-        dispatch(setNotification(`The blog' ${blog.title}' by '${blog.author} removed`))
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
-      } catch (exception) {
-        dispatch(setNotification('error deleting', 'error'))
-      }
-    }
-  }
+  // const remove = async (blog) => {
+  //   if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+  //     try {
+  //       await blogService.remove(blog.id)
+  //       dispatch(setNotification(`The blog' ${blog.title}' by '${blog.author} removed`))
+  //       setBlogs(blogs.filter((b) => b.id !== blog.id))
+  //     } catch (exception) {
+  //       dispatch(setNotification('error deleting', 'error'))
+  //     }
+  //   }
+  // }
 
   if (!user) {
     return (
@@ -95,18 +85,19 @@ const App = () => {
       </div>
 
       <NewBlog />
-
-      <div>
+      <BlogList user={user} />
+      {/* <div>
         {[...blogs].sort(byLikes).map(blog =>
           <Blog
             key={blog.id}
             blog={blog}
-            like={() => like(blog)}
             canRemove={user && blog.user.username === user.username}
             remove={() => remove(blog)}
           />
         )}
-      </div>
+      </div> */}
+
+
     </div>
   )
 }

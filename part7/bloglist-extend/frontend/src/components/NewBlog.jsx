@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import Togglable from './Togglable'
 import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/infoReducer'
 import blogService from '../services/blogs'
-import { createBlog } from '../reducers/blogSlice'
+import { appendBlog } from '../reducers/blogSlice'
 
 const BlogForm = (props) => {
   const blogFormRef = useRef()
@@ -19,7 +19,7 @@ const BlogForm = (props) => {
         url: event.target.url.value
       }
       const newBlog = await blogService.createNew(object)
-      dispatch(createBlog(newBlog))
+      dispatch(appendBlog(newBlog))
       dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`))
     } catch (exception) {
       dispatch(setNotification('error adding', 'error'))
