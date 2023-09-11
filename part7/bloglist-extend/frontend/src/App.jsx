@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -7,29 +7,20 @@ import storageService from './services/storage'
 import LoginForm from './components/LoginForm'
 import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 
-import { useDispatch } from 'react-redux'
-import { createInfo, clearInfo } from './reducers/infoReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { setNotification } from './reducers/infoReducer'
+import { setBlogs } from './reducers/blogSlice'
 
 const App = () => {
   const dispatch = useDispatch()
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blogs)
   const [user, setUser] = useState('')
-
-  const blogFormRef = useRef()
-
-  const notifyWith = (message, type = 'info') => {
-    dispatch(createInfo({ message, type }))
-    setTimeout(() => {
-      dispatch(clearInfo())
-    }, 3000)
-  }
 
   useEffect(() => {
     blogService.
       getAll()
-      .then((blogs) => setBlogs(blogs))
+      .then((blogs) => dispatch(setBlogs(blogs)))
   }, [])
 
   useEffect(() => {
@@ -46,37 +37,26 @@ const App = () => {
       storageService.saveUser(user)
       blogService.setToken(user.token)
       setUser(user)
-      notifyWith('Welcome!')
+      dispatch(setNotification('Welcome!'))
     } catch (exception) {
-      notifyWith('wrong username or password', 'error')
+      dispatch(setNotification('wrong username or password', 'error'))
     }
   }
 
   const logout = (event) => {
     storageService.removeUser()
     setUser(null)
-    notifyWith('logged out')
-  }
-
-  const createBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      const createdBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(createdBlog))
-      notifyWith(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
-    } catch (exception) {
-      notifyWith('error adding', 'error')
-    }
+    dispatch(setNotification('logged out'))
   }
 
   const like = async (blog) => {
     const blogToUpdate = { ...blog, likes: blog.likes + 1 }
     try {
       const updatedBlog = await blogService.update(blogToUpdate)
-      notifyWith(`A like for the blog '${blog.title}' by '${blog.author}'`)
+      dispatch(setNotification(`A like for the blog '${blog.title}' by '${blog.author}'`))
       setBlogs(blogs.map((b) => (b.id !== blog.id ? b : updatedBlog)))
     } catch (exception) {
-      notifyWith('error liking', 'error')
+      dispatch(setNotification('error liking', 'error'))
     }
   }
 
@@ -84,10 +64,10 @@ const App = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
         await blogService.remove(blog.id)
-        notifyWith(`The blog' ${blog.title}' by '${blog.author} removed`)
+        dispatch(setNotification(`The blog' ${blog.title}' by '${blog.author} removed`))
         setBlogs(blogs.filter((b) => b.id !== blog.id))
       } catch (exception) {
-        notifyWith('error deleting', 'error')
+        dispatch(setNotification('error deleting', 'error'))
       }
     }
   }
@@ -114,12 +94,10 @@ const App = () => {
         <button onClick={logout}>logout</button>
       </div>
 
-      <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <NewBlog createBlog={createBlog} />
-      </Togglable>
+      <NewBlog />
 
       <div>
-        {blogs.sort(byLikes).map(blog =>
+        {[...blogs].sort(byLikes).map(blog =>
           <Blog
             key={blog.id}
             blog={blog}

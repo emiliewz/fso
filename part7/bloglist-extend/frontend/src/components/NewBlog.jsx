@@ -1,21 +1,37 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState, useRef } from 'react'
+import Togglable from './Togglable'
+import { useDispatch } from 'react-redux'
+import { setNotification } from '../reducers/infoReducer'
+import blogService from '../services/blogs'
+import { createBlog } from '../reducers/blogSlice'
 
-const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+const BlogForm = (props) => {
+  const blogFormRef = useRef()
+  const dispatch = useDispatch()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    await createBlog({ title, author, url })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    blogFormRef.current.toggleVisibility()
+    try {
+      const object = {
+        title: event.target.title.value,
+        author: event.target.author.value,
+        url: event.target.url.value
+      }
+      const newBlog = await blogService.createNew(object)
+      dispatch(createBlog(newBlog))
+      dispatch(setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`))
+    } catch (exception) {
+      dispatch(setNotification('error adding', 'error'))
+    }
+    event.target.title.value = ''
+    event.target.author.value = ''
+    event.target.url.value = ''
   }
 
+
   return (
-    <>
+    <Togglable buttonLabel='new blog' ref={blogFormRef}>
       <h4>Create a new blog</h4>
 
       <form onSubmit={handleSubmit}>
@@ -24,8 +40,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             id='blog-title'
             placeholder='title'
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
+            name='title'
           />
         </div>
         <div>
@@ -33,8 +48,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             id='blog-author'
             placeholder='author'
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
+            name='author'
           />
         </div>
         <div>
@@ -42,18 +56,13 @@ const BlogForm = ({ createBlog }) => {
           <input
             id='blog-url'
             placeholder='url'
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
+            name='url'
           />
         </div>
         <button type='submit'>create</button>
       </form>
-    </>
+    </Togglable>
   )
-}
-
-BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm

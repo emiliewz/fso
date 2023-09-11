@@ -17,4 +17,11 @@ const infoSlice = createSlice({
 
 export const { createInfo, clearInfo } = infoSlice.actions
 
+export const setNotification = (message, type = 'info') => {
+  return async dispatch => {
+    dispatch(createInfo({ message, type }))
+    setTimeout(() => dispatch(clearInfo()), 3000)
+  }
+}
+
 export default infoSlice.reducer
