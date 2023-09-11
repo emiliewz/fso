@@ -1,7 +1,7 @@
-import { useSelector } from 'react-redux'
+import { useInfoValue } from '../InfoContext'
 
 const Notification = () => {
-  const info = useSelector(state => state.info)
+  const info = useInfoValue()
 
   if (!(info && info.message)) {
     return null

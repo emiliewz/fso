@@ -1,9 +1,9 @@
-const blogsRouter = require('express').Router()
+const router = require('express').Router()
 const Blog = require('../models/blog')
 
 const { userExtractor } = require('../utils/middleware')
 
-blogsRouter.get('/', async (request, response) => {
+router.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})
     .populate('user', { username: 1, name: 1 })
@@ -11,7 +11,7 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', userExtractor, async (request, response) => {
+router.post('/', userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
   const user = request.user
 
@@ -25,17 +25,17 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     user: user._id
   })
 
-  let savedBlog = await blog.save()
+  let createdBlog = await blog.save()
 
-  user.blogs = user.blogs.concat(savedBlog._id)
+  user.blogs = user.blogs.concat(createdBlog._id)
   await user.save()
 
-  savedBlog = await Blog.findById(savedBlog._id).populate('user')
+  createdBlog = await Blog.findById(createdBlog._id).populate('user')
 
-  response.status(201).json(savedBlog)
+  response.status(201).json(createdBlog)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+router.put('/:id', async (request, response) => {
   const { title, author, url, likes } = request.body
 
   let updatedBlog = await Blog.findByIdAndUpdate(request.params.id, {
@@ -46,11 +46,10 @@ blogsRouter.put('/:id', async (request, response) => {
   response.json(updatedBlog)
 })
 
-blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+router.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
-
   const blog = await Blog.findById(request.params.id)
-
+  console.log('blog', blog)
   if (!user || blog.user.toString() !== user.id.toString()) {
     return response.status(401).json({ error: 'operation not permitted' })
   }
@@ -65,4 +64,4 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 })
 
 
-module.exports = blogsRouter
+module.exports = router

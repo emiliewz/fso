@@ -1,4 +1,5 @@
 import axios from 'axios'
+import storageService from './storage'
 const baseUrl = '/api/blogs'
 
 let token = null
@@ -16,7 +17,7 @@ const getAll = async () => {
   return request.data
 }
 
-const createNew = async (object) => {
+const create = async (object) => {
   const response = await axios.post(baseUrl, object, { headers })
   return response.data
 }
@@ -31,4 +32,4 @@ const remove = async (id) => {
   return response.data
 }
 
-export default { setToken, getAll, createNew, update, remove }
+export default { setToken, getAll, create, update, remove }

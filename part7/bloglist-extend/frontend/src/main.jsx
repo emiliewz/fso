@@ -1,12 +1,10 @@
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import App from './App'
-
-import { Provider } from 'react-redux'
-import store from './reducers/store'
+import './index.css'
+import { InfoContextProvider } from './InfoContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <App />
-  </Provider >
+    <InfoContextProvider>
+        <App />
+    </InfoContextProvider>
 )
