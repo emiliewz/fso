@@ -1,103 +1,41 @@
-import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
-import storageService from './services/storage'
+import { useEffect } from 'react'
 
 import LoginForm from './components/LoginForm'
+import LogoutForm from './components/LogoutForm'
 import NewBlog from './components/NewBlog'
+import BlogList from './components/BlogList'
 import Notification from './components/Notification'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { setNotification } from './reducers/infoReducer'
-import { setBlogs } from './reducers/blogSlice'
-import BlogList from './components/BlogList'
+import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUser } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
-  const blogs = useSelector(state => state.blogs)
-  const [user, setUser] = useState('')
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
-    blogService.
-      getAll()
-      .then((blogs) => dispatch(setBlogs(blogs)))
-  }, [])
-
-  useEffect(() => {
-    const loadedUser = storageService.loadUser()
-    if (loadedUser) {
-      setUser(loadedUser)
-      blogService.setToken(loadedUser.token)
-    }
-  }, [])
-
-  const login = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials)
-      storageService.saveUser(user)
-      blogService.setToken(user.token)
-      setUser(user)
-      dispatch(setNotification('Welcome!'))
-    } catch (exception) {
-      dispatch(setNotification('wrong username or password', 'error'))
-    }
-  }
-
-  const logout = (event) => {
-    storageService.removeUser()
-    setUser(null)
-    dispatch(setNotification('logged out'))
-  }
-
-  // const remove = async (blog) => {
-  //   if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-  //     try {
-  //       await blogService.remove(blog.id)
-  //       dispatch(setNotification(`The blog' ${blog.title}' by '${blog.author} removed`))
-  //       setBlogs(blogs.filter((b) => b.id !== blog.id))
-  //     } catch (exception) {
-  //       dispatch(setNotification('error deleting', 'error'))
-  //     }
-  //   }
-  // }
+    dispatch(initializeUser())
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   if (!user) {
     return (
       <div>
         <h2>log in to application</h2>
         <Notification />
-        <LoginForm login={login} />
+        <LoginForm />
       </div>
     )
   }
-
-  const byLikes = (a, b) => b.likes - a.likes
 
   return (
     <div>
       <h2>blogs</h2>
       <Notification />
-
-      <div>
-        {user.name} logged in
-        <button onClick={logout}>logout</button>
-      </div>
-
+      <LogoutForm />
       <NewBlog />
-      <BlogList user={user} />
-      {/* <div>
-        {[...blogs].sort(byLikes).map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            canRemove={user && blog.user.username === user.username}
-            remove={() => remove(blog)}
-          />
-        )}
-      </div> */}
-
-
+      <BlogList />
     </div>
   )
 }

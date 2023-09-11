@@ -1,7 +1,5 @@
 import axios from 'axios'
-import storageService from './storage'
 const baseUrl = '/api/blogs'
-// const baseUrl = 'http://localhost:3001/blogs'
 
 let token = null
 let headers = null
