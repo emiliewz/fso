@@ -12,11 +12,15 @@ import { initializeBlogs } from './reducers/blogReducer'
 import { initializeLogin } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import { Routes, Route, useMatch } from 'react-router-dom'
+import Blog from './components/Blog'
 
 const App = () => {
   const dispatch = useDispatch()
   const loggedin = useSelector(state => state.login)
-  const match = useMatch('/users/:/id')
+  const users = useSelector(state => state.users)
+  const blogs = useSelector(state => state.blogs)
+  const matchUser = useMatch('/users/:id')
+  const matchBlog = useMatch('/blogs/:id')
 
   useEffect(() => {
     dispatch(initializeLogin())
@@ -34,8 +38,12 @@ const App = () => {
     )
   }
 
-  const singleUser = match
-    ? []
+  const singleUser = matchUser
+    ? users.find(u => u.id === matchUser.params.id)
+    : null
+
+  const singleBlog = matchBlog
+    ? blogs.find(b => b.id === matchBlog.params.id)
     : null
 
   return (
@@ -44,14 +52,14 @@ const App = () => {
       <Notification />
       <LogoutForm />
       <NewBlog />
-      <BlogList />
 
       <Routes>
         <Route path='/users' element={< UserList />} />
         <Route path='/users/:id' element={<User user={singleUser} />} />
+
+        <Route path='/' element={<BlogList />} />
+        <Route path='/blogs/:id' element={<Blog blog={singleBlog} />} />
       </Routes>
-
-
     </div>
   )
 }

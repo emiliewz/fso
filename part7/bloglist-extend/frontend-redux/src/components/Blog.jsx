@@ -1,24 +1,47 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { setNotification } from '../reducers/infoReducer'
+import { removeBlog, updateBlog } from '../reducers/blogReducer'
+import { useNavigate } from 'react-router-dom'
 
-const Blog = ({ blog, canRemove, remove, like }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blog }) => {
+  const loggedin = useSelector(state => state.login)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const style = {
-    marginBottom: 2,
-    padding: 5,
-    borderStyle: 'solid',
+  if (!blog) return null
+
+
+  const remove = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      try {
+        dispatch(removeBlog(blog.id))
+        dispatch(setNotification(`The blog' ${blog.title}' by '${blog.author} removed`))
+        navigate('/')
+      } catch (exception) {
+        dispatch(setNotification('error deleting', 'error'))
+      }
+    }
   }
 
+  const like = async (blog) => {
+    const blogToUpdate = { ...blog, likes: blog.likes + 1 }
+    try {
+      dispatch(updateBlog(blogToUpdate))
+      dispatch(setNotification(`A like for the blog '${blog.title}' by '${blog.author}'`))
+    } catch (exception) {
+      dispatch(setNotification('error liking', 'error'))
+    }
+  }
+
+  const canRemove = loggedin && blog.user.username === loggedin.username
+
+
   return (
-    <div style={style} className='blog'>
-      {blog.title} {blog.author}
-
-      <button onClick={() => setVisible(!visible)}>
-        {visible ? 'hide' : 'show'}
-      </button>
-
-      {visible && <div>
+    <div>
+      <h2>{blog.title}</h2>
+      <div>
         <div>
           <a href={blog.url}>
             {blog.url}
@@ -26,32 +49,19 @@ const Blog = ({ blog, canRemove, remove, like }) => {
         </div>
 
         <div>
-          likes {blog.likes} <button onClick={like}>like</button>
+          {blog.likes} likes <button onClick={() => like(blog)}>like</button>
         </div>
 
         <div>
-          {blog.user && blog.user.name}
+          {blog.user && <div>added by {blog.user.name}</div>}
         </div>
 
         {canRemove &&
-          <button onClick={remove}>delete</button>
+          <button onClick={() => remove(blog)}>delete</button>
         }
       </div>
-      }
     </div>
   )
-}
-
-Blog.propTypes = {
-  remove: PropTypes.func.isRequired,
-  like: PropTypes.func.isRequired,
-  canRemove: PropTypes.bool,
-  blog: PropTypes.shape({
-    title: PropTypes.string,
-    author: PropTypes.string,
-    url: PropTypes.string,
-    likes: PropTypes.number
-  })
 }
 
 export default Blog

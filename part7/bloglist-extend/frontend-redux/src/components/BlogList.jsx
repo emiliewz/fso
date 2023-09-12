@@ -1,49 +1,24 @@
-import Blog from './Blog'
-import { useDispatch, useSelector } from 'react-redux'
-import { setNotification } from '../reducers/infoReducer'
-import { removeBlog, updateBlog } from '../reducers/blogReducer'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
-  const loggedin = useSelector(state => state.login)
-
-  const dispatch = useDispatch()
 
   const byLikes = (a, b) => b.likes - a.likes
 
-  const remove = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      try {
-        dispatch(removeBlog(blog.id))
-        dispatch(setNotification(`The blog' ${blog.title}' by '${blog.author} removed`))
-      } catch (exception) {
-        dispatch(setNotification('error deleting', 'error'))
-      }
-    }
-  }
-
-  const like = async (blog) => {
-    const blogToUpdate = { ...blog, likes: blog.likes + 1 }
-    try {
-      dispatch(updateBlog(blogToUpdate))
-      dispatch(setNotification(`A like for the blog '${blog.title}' by '${blog.author}'`))
-    } catch (exception) {
-      dispatch(setNotification('error liking', 'error'))
-    }
+  const style = {
+    marginBottom: 2,
+    padding: 5,
+    borderStyle: 'solid',
   }
 
   return (
     <div>
-      {
-        [...blogs].sort(byLikes).map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            like={() => like(blog)}
-            canRemove={loggedin && blog.user.username === loggedin.username}
-            remove={() => remove(blog)}
-          />)
-      }
+      {[...blogs].sort(byLikes).map(blog => (
+        <div key={blog.id} style={style} className='blog'>
+          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+        </div>
+      ))}
     </div>
   )
 }
