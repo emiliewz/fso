@@ -3,10 +3,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import blogService from '../services/blogs'
 import Blog from './Blog'
 import { useInfo } from '../InfoContext'
+import { useUserValue } from '../UserContext'
 
-const BlogList = ({ user, blogs }) => {
+const BlogList = () => {
   const queryClient = useQueryClient()
   const notify = useInfo()
+  const user = useUserValue()
+
+  const blogs = queryClient.getQueryData({ queryKey: ['blogs'] })
 
   const likeBlogMutation = useMutation({
     mutationFn: blogService.update,

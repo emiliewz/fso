@@ -1,44 +1,25 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import storageService from './services/storage'
 
-import LoginForm from './components/LoginForm'
+import LoginForm, { LogoutForm } from './components/LoginForm'
 import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
-import { useInfo } from './InfoContext'
 import { useQuery } from '@tanstack/react-query'
 import BlogList from './components/BlogList'
+import { useLogin, useUserValue } from './UserContext'
 
 const App = () => {
-  const [user, setUser] = useState('')
-  const notify = useInfo()
+  const loginWith = useLogin()
+  const user = useUserValue()
 
   useEffect(() => {
     const loadedUser = storageService.loadUser()
     if (loadedUser) {
-      setUser(loadedUser)
+      loginWith(loadedUser)
       blogService.setToken(loadedUser.token)
     }
   }, [])
-
-  const login = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials)
-      storageService.saveUser(user)
-      blogService.setToken(user.token)
-      setUser(user)
-      notify('Welcome!')
-    } catch (exception) {
-      notify('wrong username or password', 'error')
-    }
-  }
-
-  const logout = (event) => {
-    storageService.removeUser()
-    setUser(null)
-    notify('logged out')
-  }
 
   const result = useQuery({
     queryKey: ['blogs'],
@@ -53,14 +34,12 @@ const App = () => {
     return <div>blog service not available due to problems in server</div>
   }
 
-  const blogs = result.data
-
   if (!user) {
     return (
       <div>
         <h2>log in to application</h2>
         <Notification />
-        <LoginForm login={login} />
+        <LoginForm />
       </div>
     )
   }
@@ -69,14 +48,9 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-
-      <div>
-        {user.name} logged in
-        <button onClick={logout}>logout</button>
-      </div>
-
+      <LogoutForm />
       <NewBlog />
-      <BlogList user={user} blogs={blogs} />
+      <BlogList />
 
     </div>
   )

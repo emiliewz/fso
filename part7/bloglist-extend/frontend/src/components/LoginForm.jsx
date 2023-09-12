@@ -1,13 +1,27 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useInfo } from '../InfoContext'
+import blogService from '../services/blogs'
+import loginService from '../services/login'
+import storageService from '../services/storage'
+import { useLogin, useLogout, useUserValue } from '../UserContext'
 
-const LoginForm = ({ login }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const notify = useInfo()
+  const loginWith = useLogin()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    await login({ username, password })
+    try {
+      const user = await loginService.login({ username, password })
+      storageService.saveUser(user)
+      blogService.setToken(user.token)
+      loginWith(user)
+      notify('Welcome!')
+    } catch (exception) {
+      notify('wrong username or password', 'error')
+    }
   }
 
   return (
@@ -36,8 +50,23 @@ const LoginForm = ({ login }) => {
   )
 }
 
-LoginForm.propTypes = {
-  login: PropTypes.func.isRequired,
+export const LogoutForm = () => {
+  const user = useUserValue()
+  const logout = useLogout()
+  const notify = useInfo()
+
+  const handleLogout = () => {
+    storageService.removeUser()
+    logout()
+    notify('logged out')
+  }
+
+  return (
+    <div>
+      {user.name} logged in
+      <button onClick={handleLogout}>logout</button>
+    </div>
+  )
 }
 
 export default LoginForm
