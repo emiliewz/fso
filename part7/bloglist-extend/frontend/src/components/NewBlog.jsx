@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import blogService from '../services/blogs'
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Togglable from './Togglable'
 import { useInfo } from '../InfoContext'
 
@@ -10,7 +10,7 @@ const BlogForm = () => {
   const notify = useInfo()
 
   const newBlogMutation = useMutation({
-    mutationFn: blogService.create,
+    mutationFn: blogService.createNew,
     onSuccess: (newBlog) => {
       const blogs = queryClient.getQueryData({ queryKey: ['blogs'] })
       queryClient.setQueryData({ queryKey: ['blogs'] }, blogs.concat(newBlog))
@@ -18,7 +18,6 @@ const BlogForm = () => {
     },
     onError: (error) => notify(error.response.data.error)
   })
-
 
   const onCreate = (event) => {
     event.preventDefault()

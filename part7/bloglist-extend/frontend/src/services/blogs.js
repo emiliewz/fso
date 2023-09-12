@@ -16,7 +16,7 @@ const getAll = async () => {
   return request.data
 }
 
-const create = async (object) => {
+const createNew = async (object) => {
   const response = await axios.post(baseUrl, object, { headers })
   return response.data
 }
@@ -26,9 +26,9 @@ const update = async (object) => {
   return response.data
 }
 
-const remove = async (id) => {
-  const response = await axios.delete(`${baseUrl}/${id}`, { headers })
-  return response.data
+const deleteOne = async (object) => {
+  const response = await axios.delete(`${baseUrl}/${object.id}`, { headers })
+  return { ...response.data, deletedBlog: object }
 }
 
-export default { setToken, getAll, create, update, remove }
+export default { setToken, getAll, createNew, update, deleteOne }

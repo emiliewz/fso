@@ -34,7 +34,7 @@ export const useInfoDispatch = () => {
 export const useInfo = () => {
   const [info, infoDispatch] = useContext(InfoContext)
 
-  return (message, type = 'info', time = 5) => {
+  return (message, type = 'info', time = 3) => {
     infoDispatch({ type: 'SET', payload: { message, type } })
     setTimeout(() => infoDispatch({ type: 'SET', payload: null }), time * 1000)
   }

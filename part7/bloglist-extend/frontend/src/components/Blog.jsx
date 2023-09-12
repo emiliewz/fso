@@ -21,7 +21,7 @@ const Blog = ({ blog, like, canRemove, remove }) => {
           <div> <a href={blog.url}> {blog.url} </a> </div>
           <div>likes {blog.likes} <button onClick={like}>like</button> </div>
           <div>{blog.user && blog.user.name}</div>
-          {canRemove && <button onClick={remove}>delete</button>}
+          {canRemove && <button onClick={() => remove(blog)}>delete</button>}
         </div>
       }
     </div>
