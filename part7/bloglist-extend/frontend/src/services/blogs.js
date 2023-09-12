@@ -1,5 +1,4 @@
 import axios from 'axios'
-import storageService from './storage'
 const baseUrl = '/api/blogs'
 
 let token = null

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -7,22 +7,12 @@ import storageService from './services/storage'
 import LoginForm from './components/LoginForm'
 import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import { useInfo } from './InfoContext'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState('')
   const notify = useInfo()
-
-  const blogFormRef = useRef()
-
-
-  useEffect(() => {
-    blogService.
-      getAll()
-      .then((blogs) => setBlogs(blogs))
-  }, [])
 
   useEffect(() => {
     const loadedUser = storageService.loadUser()
@@ -50,17 +40,6 @@ const App = () => {
     notify('logged out')
   }
 
-  const createBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      const createdBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(createdBlog))
-      notify(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
-    } catch (exception) {
-      notify('error adding', 'error')
-    }
-  }
-
   const like = async (blog) => {
     const blogToUpdate = { ...blog, likes: blog.likes + 1 }
     try {
@@ -84,6 +63,19 @@ const App = () => {
     }
   }
 
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll
+  })
+
+  if (result.isLoading) {
+    return <div>loading data...</div>
+  } else if (result.isError) {
+    return <div>error...</div>
+  }
+
+  const blogs = result.data
+
   if (!user) {
     return (
       <div>
@@ -106,9 +98,7 @@ const App = () => {
         <button onClick={logout}>logout</button>
       </div>
 
-      <Togglable buttonLabel='new blog' ref={blogFormRef}>
-        <NewBlog createBlog={createBlog} />
-      </Togglable>
+      <NewBlog />
 
       <div>
         {blogs.sort(byLikes).map(blog =>
