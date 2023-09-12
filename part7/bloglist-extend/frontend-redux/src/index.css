@@ -8,3 +8,13 @@
   padding: 10px;
   margin-bottom: 10px;
 }
+
+.nav {
+  padding: 5px;
+}
+
+.blog {
+  margin-bottom: 2px;
+  padding: 5px;
+  border-style: solid;
+}

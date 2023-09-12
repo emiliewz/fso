@@ -13,10 +13,9 @@ const LogoutForm = () => {
   }
 
   return (
-    <div>
-      <p>{login.name} logged in</p>
-      <button onClick={handleClick}>logout</button>
-    </div>
+    <>
+      {login.name} logged in <button onClick={handleClick}>logout</button>
+    </>
   )
 }
 

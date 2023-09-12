@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeLogin } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/usersReducer'
-import { Routes, Route, useMatch } from 'react-router-dom'
+import { Routes, Route, useMatch, Link } from 'react-router-dom'
 import Blog from './components/Blog'
 
 const App = () => {
@@ -48,9 +48,14 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification />
-      <LogoutForm />
+      <div>
+        <Link className='nav' to='/'>blogs</Link>
+        <Link className='nav' to='/users'>users</Link>
+        <Notification />
+        <LogoutForm />
+      </div>
+      <h2>blog app</h2>
+
       <NewBlog />
 
       <Routes>
