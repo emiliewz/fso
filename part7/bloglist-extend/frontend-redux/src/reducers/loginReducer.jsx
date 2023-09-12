@@ -3,42 +3,42 @@ import { createSlice } from '@reduxjs/toolkit'
 import storageService from '../services/storage'
 import blogService from '../services/blogs'
 
-const userSlice = createSlice({
-  name: 'user',
+const loginSlice = createSlice({
+  name: 'login',
   initialState: null,
   reducers: {
-    setUser(state, action) {
+    setLogin(state, action) {
       return action.payload
     }
   }
 })
 
-export const { setUser } = userSlice.actions
+export const { setLogin } = loginSlice.actions
 
-export const initializeUser = () => {
+export const initializeLogin = () => {
   return async dispatch => {
     const loadedUser = storageService.loadUser()
     if (loadedUser) {
       blogService.setToken(loadedUser.token)
-      dispatch(setUser(loadedUser))
+      dispatch(setLogin(loadedUser))
     }
   }
 }
 
-export const login = (credentials) => {
+export const loginWith = (credentials) => {
   return async dispatch => {
     const user = await loginService.login(credentials)
     storageService.saveUser(user)
     blogService.setToken(user.token)
-    dispatch(setUser(user))
+    dispatch(setLogin(user))
   }
 }
 
 export const logout = () => {
   return async dispatch => {
     storageService.removeUser()
-    dispatch(setUser(null))
+    dispatch(setLogin(null))
   }
 }
 
-export default userSlice.reducer
+export default loginSlice.reducer

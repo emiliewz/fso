@@ -5,7 +5,7 @@ import { removeBlog, updateBlog } from '../reducers/blogReducer'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
-  const user = useSelector(state => state.user)
+  const loggedin = useSelector(state => state.login)
 
   const dispatch = useDispatch()
 
@@ -40,7 +40,7 @@ const BlogList = () => {
             key={blog.id}
             blog={blog}
             like={() => like(blog)}
-            canRemove={user && blog.user.username === user.username}
+            canRemove={loggedin && blog.user.username === loggedin.username}
             remove={() => remove(blog)}
           />)
       }

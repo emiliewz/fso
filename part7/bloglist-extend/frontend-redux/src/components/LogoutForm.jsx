@@ -1,11 +1,11 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/infoReducer'
-import { logout } from '../reducers/userReducer'
+import { logout } from '../reducers/loginReducer'
 
 const LogoutForm = () => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const login = useSelector(state => state.login)
 
   const handleClick = () => {
     dispatch(logout())
@@ -14,7 +14,7 @@ const LogoutForm = () => {
 
   return (
     <div>
-      {user.name} logged in
+      {login.name} logged in
       <button onClick={handleClick}>logout</button>
     </div>
   )

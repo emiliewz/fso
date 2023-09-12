@@ -4,25 +4,27 @@ import LogoutForm from './components/LogoutForm'
 import NewBlog from './components/NewBlog'
 import BlogList from './components/BlogList'
 import Notification from './components/Notification'
-import Users from './components/Users'
+import UserList from './components/UserList'
+import User from './components/User'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
-import { initializeUser } from './reducers/userReducer'
+import { initializeLogin } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/usersReducer'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const loggedin = useSelector(state => state.login)
+  const match = useMatch('/users/:/id')
 
   useEffect(() => {
-    dispatch(initializeUser())
+    dispatch(initializeLogin())
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
   }, [])
 
-  if (!user) {
+  if (!loggedin) {
     return (
       <div>
         <h2>log in to application</h2>
@@ -31,6 +33,10 @@ const App = () => {
       </div>
     )
   }
+
+  const singleUser = match
+    ? []
+    : null
 
   return (
     <div>
@@ -41,7 +47,8 @@ const App = () => {
       <BlogList />
 
       <Routes>
-        <Route path='/users' element={< Users />} />
+        <Route path='/users' element={< UserList />} />
+        <Route path='/users/:id' element={<User user={singleUser} />} />
       </Routes>
 
 
