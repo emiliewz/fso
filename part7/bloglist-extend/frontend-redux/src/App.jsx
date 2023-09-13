@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeLogin } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/usersReducer'
-import { Routes, Route, useMatch, Link } from 'react-router-dom'
+import { Routes, Route, useMatch, Link, Navigate } from 'react-router-dom'
 import Blog from './components/Blog'
 
 const App = () => {
@@ -23,20 +23,10 @@ const App = () => {
   const matchBlog = useMatch('/blogs/:id')
 
   useEffect(() => {
-    dispatch(initializeLogin())
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
+    dispatch(initializeLogin())
   }, [])
-
-  if (!loggedin) {
-    return (
-      <div>
-        <h2>log in to application</h2>
-        <Notification />
-        <LoginForm />
-      </div>
-    )
-  }
 
   const singleUser = matchUser
     ? users.find(u => u.id === matchUser.params.id)
@@ -47,23 +37,27 @@ const App = () => {
     : null
 
   return (
-    <div>
+    <div className='container'>
       <div>
-        <Link className='nav' to='/'>blogs</Link>
-        <Link className='nav' to='/users'>users</Link>
-        <Notification />
-        <LogoutForm />
+        <Link style={{ padding: 5 }} to='/'>blogs</Link>
+        <Link style={{ padding: 5 }} to='/users'>users</Link>
+        {loggedin
+          ? <LogoutForm />
+          : <Link style={{ padding: 5 }} to='/login'>login</Link>
+        }
       </div>
+
+      <Notification />
       <h2>blog app</h2>
 
-      <NewBlog />
-
       <Routes>
-        <Route path='/users' element={< UserList />} />
+        <Route path='/' element={<div><NewBlog /><BlogList /></div>} />
+        <Route path='/blogs/:id' element={<Blog blog={singleBlog} />} />
+
+        <Route path='/users' element={loggedin ? <UserList /> : <Navigate replace to='/login' />} />
         <Route path='/users/:id' element={<User user={singleUser} />} />
 
-        <Route path='/' element={<BlogList />} />
-        <Route path='/blogs/:id' element={<Blog blog={singleBlog} />} />
+        <Route path='/login' element={<LoginForm />} />
       </Routes>
     </div>
   )

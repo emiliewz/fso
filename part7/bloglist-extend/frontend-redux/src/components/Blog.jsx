@@ -46,6 +46,7 @@ const Blog = ({ blog }) => {
     } catch (exception) {
       dispatch(setNotification('error commenting', 'error'))
     }
+    event.target.comment.value = ''
   }
 
   return (

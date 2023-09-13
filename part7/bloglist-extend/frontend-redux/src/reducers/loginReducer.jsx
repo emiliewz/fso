@@ -18,6 +18,7 @@ export const { setLogin } = loginSlice.actions
 export const initializeLogin = () => {
   return async dispatch => {
     const loadedUser = storageService.loadUser()
+
     if (loadedUser) {
       blogService.setToken(loadedUser.token)
       dispatch(setLogin(loadedUser))
