@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/infoReducer'
 import { removeBlog, updateBlog, commentBlog } from '../reducers/blogReducer'
 import { useNavigate } from 'react-router-dom'
+import { Button, Card, Form, ListGroup, ListGroupItem } from 'react-bootstrap'
 
 const Blog = ({ blog }) => {
   const loggedin = useSelector(state => state.login)
@@ -11,7 +12,6 @@ const Blog = ({ blog }) => {
   const navigate = useNavigate()
 
   if (!blog) return null
-
 
   const remove = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
@@ -40,6 +40,7 @@ const Blog = ({ blog }) => {
   const handleComment = (event) => {
     event.preventDefault()
     const comment = event.target.comment.value
+
     try {
       dispatch(commentBlog(comment, blog))
       dispatch(setNotification(`a new comment ${comment} added`))
@@ -50,39 +51,45 @@ const Blog = ({ blog }) => {
   }
 
   return (
-    <div>
-      <h2>{blog.title}</h2>
-      <div>
-        <div>
-          <a href={blog.url}>
+    <Card>
+      <Card.Body>
+        <h2 className='mt-3 mb-5'>{blog.title}</h2>
+
+        <Card.Text>
+          <Card.Link className='text-decoration-none mb-2' href={blog.url}>
             {blog.url}
-          </a>
-        </div>
+          </Card.Link>
+        </Card.Text>
 
-        <div>
-          {blog.likes} likes <button onClick={() => like(blog)}>like</button>
-        </div>
+        <Card.Text>
+          {blog.likes} likes {loggedin && <button onClick={() => like(blog)}>like</button>}
+        </Card.Text>
 
-        <div>
-          {blog.user && <div>added by {blog.user.name}</div>}
-        </div>
+        <Card.Text>added by {blog.user.name}</Card.Text>
 
         {canRemove &&
           <button onClick={() => remove(blog)}>delete</button>
         }
 
-        <h3>comments</h3>
+        <h3 className='mt-5'>comments</h3>
 
-        <form onSubmit={handleComment}>
-          <input name='comment' />
-          <button>add comment</button>
-        </form>
+        {loggedin && <Form onSubmit={handleComment}>
+          <Form.Group>
+            <Form.Control
+              type='text'
+              name='comment'
+            />
+            <Button className='mt-2' variant='secondary' type='submit'>add comment</Button>
+          </Form.Group>
+        </Form>}
 
-        <ul>
-          {blog.comments.map((c, i) => <li key={i}>{c}</li>)}
-        </ul>
-      </div>
-    </div>
+        <ListGroup className='mt-3'>
+          {blog.comments.map((c, i) =>
+            <ListGroupItem variant="dark" key={i}>{c}</ListGroupItem>)
+          }
+        </ListGroup>
+      </Card.Body>
+    </Card>
   )
 }
 

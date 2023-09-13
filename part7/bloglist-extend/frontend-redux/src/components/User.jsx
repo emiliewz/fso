@@ -1,3 +1,6 @@
+import { Table } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+
 const User = ({ user }) => {
   if (!user) return null
 
@@ -5,14 +8,20 @@ const User = ({ user }) => {
     <div>
       <h2>{user.name}</h2>
       <h3>added blogs</h3>
-      <ul>
-        {user.blogs.map(b => (
-          <li key={b.id}>
-            {b.title}
-          </li>
-        ))}
-      </ul>
-    </div>
+      <Table striped>
+        <tbody>
+          {user.blogs.map((b, i) => (
+            <tr key={b.id}>
+              <td>
+                <Link className='text-decoration-none' to={`/blogs/${b.id}`}>
+                  {i + 1}. {b.title}
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div >
   )
 }
 

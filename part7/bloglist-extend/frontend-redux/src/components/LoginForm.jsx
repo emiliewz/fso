@@ -2,6 +2,7 @@ import { loginWith } from '../reducers/loginReducer'
 import { setNotification } from '../reducers/infoReducer'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { Button, Form } from 'react-bootstrap'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -25,27 +26,30 @@ const LoginForm = () => {
   }
 
   return (
-    <>
+    <div>
       <h2>log in to application</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          username
-          <input
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control
+            type='text'
             id='username'
+            name='username'
           />
-        </div>
-        <div>
-          password
-          <input
-            id='password'
+
+          <Form.Label>password:</Form.Label>
+          <Form.Control
             type='password'
+            id='password'
+            name='password'
           />
-        </div>
-        <button id='login-button' type='submit'>
-          login
-        </button>
-      </form>
-    </>
+
+          <Button id='login-button' type='submit' variant='primary'>
+            login
+          </Button>
+        </Form.Group>
+      </Form>
+    </div>
   )
 }
 

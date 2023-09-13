@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import LoginForm from './components/LoginForm'
 import LogoutForm from './components/LogoutForm'
-import NewBlog from './components/NewBlog'
 import BlogList from './components/BlogList'
 import Notification from './components/Notification'
 import UserList from './components/UserList'
@@ -11,8 +10,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { initializeLogin } from './reducers/loginReducer'
 import { initializeUsers } from './reducers/usersReducer'
-import { Routes, Route, useMatch, Link, Navigate } from 'react-router-dom'
+import { Routes, Route, useMatch, Link } from 'react-router-dom'
 import Blog from './components/Blog'
+import { Container, Nav, Navbar } from 'react-bootstrap'
+import NewBlog from './components/NewBlog'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -38,23 +39,47 @@ const App = () => {
 
   return (
     <div className='container'>
-      <div>
-        <Link style={{ padding: 5 }} to='/'>blogs</Link>
-        <Link style={{ padding: 5 }} to='/users'>users</Link>
-        {loggedin
-          ? <LogoutForm />
-          : <Link style={{ padding: 5 }} to='/login'>login</Link>
-        }
-      </div>
-
       <Notification />
-      <h2>blog app</h2>
 
+      <Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
+        <Container>
+          <Navbar.Brand as={Link} to='/'>Blog App</Navbar.Brand>
+
+          <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+
+          <Navbar.Collapse id='responsive-navbar-nav'>
+            <Nav className='me-auto'>
+
+              <Nav.Link as={Link} to='/'>
+                blogs
+              </Nav.Link>
+
+              <Nav.Link as={Link} to={loggedin ? '/users' : '/login'}>
+                users
+              </Nav.Link>
+
+              <Nav.Link href='#' as='span'>
+                {!loggedin && <Link to='/login'>login</Link>}
+              </Nav.Link>
+
+            </Nav>
+          </Navbar.Collapse>
+
+          {loggedin &&
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                Signed in as: {loggedin.name} <LogoutForm />
+              </Navbar.Text>
+            </Navbar.Collapse>}
+
+        </Container>
+      </Navbar>
       <Routes>
-        <Route path='/' element={<div><NewBlog /><BlogList /></div>} />
+        <Route path='/' element={<BlogList />} />
         <Route path='/blogs/:id' element={<Blog blog={singleBlog} />} />
+        <Route path='/blogs/create' element={<NewBlog />} />
 
-        <Route path='/users' element={loggedin ? <UserList /> : <Navigate replace to='/login' />} />
+        <Route path='/users' element={<UserList />} />
         <Route path='/users/:id' element={<User user={singleUser} />} />
 
         <Route path='/login' element={<LoginForm />} />

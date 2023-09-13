@@ -1,16 +1,15 @@
-import { useRef } from 'react'
-import Togglable from './Togglable'
 import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/infoReducer'
 import { createBlog } from '../reducers/blogReducer'
+import { Button, Form } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
-const BlogForm = () => {
-  const blogFormRef = useRef()
+const NewBlog = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    blogFormRef.current.toggleVisibility()
     try {
       const blog = {
         title: event.target.title.value,
@@ -25,42 +24,43 @@ const BlogForm = () => {
     event.target.title.value = ''
     event.target.author.value = ''
     event.target.url.value = ''
+    navigate('/')
   }
 
-
   return (
-    <Togglable buttonLabel='create new' ref={blogFormRef}>
+    <>
       <h4>Create a new blog</h4>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          title:
-          <input
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>title:</Form.Label>
+          <Form.Control
             id='blog-title'
             placeholder='title'
             name='title'
+            type='text'
           />
-        </div>
-        <div>
-          author:
-          <input
+
+          <Form.Label>author:</Form.Label>
+          <Form.Control
             id='blog-author'
             placeholder='author'
             name='author'
+            type='text'
           />
-        </div>
-        <div>
-          url:
-          <input
+
+          <Form.Label>url:</Form.Label>
+          <Form.Control
             id='blog-url'
             placeholder='url'
             name='url'
+            type='text'
           />
-        </div>
-        <button type='submit'>create</button>
-      </form>
-    </Togglable>
+          <Button variant='primary' type='submit'>create</Button>
+        </Form.Group>
+      </Form>
+    </ >
   )
 }
 
-export default BlogForm
+export default NewBlog

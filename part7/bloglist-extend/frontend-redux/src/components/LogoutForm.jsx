@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/infoReducer'
 import { logout } from '../reducers/loginReducer'
 import { useNavigate } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 const LogoutForm = () => {
   const dispatch = useDispatch()
@@ -17,7 +18,7 @@ const LogoutForm = () => {
 
   return (
     <>
-      {login.name} logged in <button onClick={handleClick}>logout</button>
+      <Button onClick={handleClick} variant='secondary' size='sm'>logout</Button>
     </>
   )
 }
