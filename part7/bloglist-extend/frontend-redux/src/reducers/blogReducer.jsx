@@ -56,8 +56,8 @@ export const removeBlog = (id) => {
 
 export const commentBlog = (comment, blog) => {
   return async dispatch => {
-    await blogService.commentOn(comment, blog.id)
-
+    const commentedBlog = await blogService.commentOn(comment, blog.id)
+    dispatch(updateOne(commentedBlog))
   }
 }
 

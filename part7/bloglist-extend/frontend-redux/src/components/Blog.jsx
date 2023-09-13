@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/infoReducer'
-import { removeBlog, updateBlog } from '../reducers/blogReducer'
+import { removeBlog, updateBlog, commentBlog } from '../reducers/blogReducer'
 import { useNavigate } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
@@ -37,6 +37,17 @@ const Blog = ({ blog }) => {
 
   const canRemove = loggedin && blog.user.username === loggedin.username
 
+  const handleComment = (event) => {
+    event.preventDefault()
+    const comment = event.target.comment.value
+    try {
+      dispatch(commentBlog(comment, blog))
+      dispatch(setNotification(`a new comment ${comment} added`))
+    } catch (exception) {
+      dispatch(setNotification('error commenting', 'error'))
+    }
+  }
+
   return (
     <div>
       <h2>{blog.title}</h2>
@@ -60,6 +71,12 @@ const Blog = ({ blog }) => {
         }
 
         <h3>comments</h3>
+
+        <form onSubmit={handleComment}>
+          <input name='comment' />
+          <button>add comment</button>
+        </form>
+
         <ul>
           {blog.comments.map((c, i) => <li key={i}>{c}</li>)}
         </ul>
