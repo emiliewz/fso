@@ -21,6 +21,12 @@ const createNew = async (object) => {
   return response.data
 }
 
+const commentOn = async (content, id) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, content)
+  console.log(response)
+  return response.data
+}
+
 const update = async (object) => {
   const response = await axios.put(`${baseUrl}/${object.id}`, object, { headers })
   return response.data
@@ -31,4 +37,4 @@ const remove = async (id) => {
   return response.data
 }
 
-export default { setToken, getAll, createNew, update, remove }
+export default { setToken, getAll, createNew, commentOn, update, remove }

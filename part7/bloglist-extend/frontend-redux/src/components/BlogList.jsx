@@ -6,12 +6,6 @@ const BlogList = () => {
 
   const byLikes = (a, b) => b.likes - a.likes
 
-  const style = {
-    marginBottom: 2,
-    padding: 5,
-    borderStyle: 'solid',
-  }
-
   return (
     <div>
       {[...blogs].sort(byLikes).map(blog => (

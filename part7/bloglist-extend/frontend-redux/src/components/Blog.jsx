@@ -37,7 +37,6 @@ const Blog = ({ blog }) => {
 
   const canRemove = loggedin && blog.user.username === loggedin.username
 
-
   return (
     <div>
       <h2>{blog.title}</h2>
@@ -59,6 +58,11 @@ const Blog = ({ blog }) => {
         {canRemove &&
           <button onClick={() => remove(blog)}>delete</button>
         }
+
+        <h3>comments</h3>
+        <ul>
+          {blog.comments.map((c, i) => <li key={i}>{c}</li>)}
+        </ul>
       </div>
     </div>
   )
