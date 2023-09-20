@@ -1,11 +1,19 @@
+import { useQuery } from '@apollo/client'
+import { Table } from 'react-bootstrap'
+import { ALL_BOOKS } from '../queries'
+
 const Books = () => {
-  const books = []
+  const result = useQuery(ALL_BOOKS)
+
+  if (result.loading) return null
+
+  const books = result.data.allBooks
 
   return (
     <div>
-      <h2>books</h2>
+      <h2 className='mt-3 mb-3'>books</h2>
 
-      <table>
+      <Table striped>
         <tbody>
           <tr>
             <th></th>
@@ -20,7 +28,7 @@ const Books = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   )
 }

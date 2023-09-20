@@ -11,7 +11,7 @@ const Authors = () => {
 
   return (
     <div>
-      <h2>authors</h2>
+      <h2 className='mt-3 mb-3'>authors</h2>
       <Table striped>
         <tbody>
           <tr>
