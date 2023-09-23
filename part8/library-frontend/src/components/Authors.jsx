@@ -1,8 +1,9 @@
 import { Table } from 'react-bootstrap'
 import { useQuery } from '@apollo/client'
 import { ALL_AUTHORS } from '../queries'
+import BirthForm from './BirthForm'
 
-const Authors = () => {
+const Authors = ({ setError }) => {
   const result = useQuery(ALL_AUTHORS)
 
   if (result.loading) return null
@@ -11,7 +12,7 @@ const Authors = () => {
 
   return (
     <div>
-      <h2 className='mt-3 mb-3'>authors</h2>
+      <h2 className='mt-3 mb-3'>Authors</h2>
       <Table striped>
         <tbody>
           <tr>
@@ -28,6 +29,7 @@ const Authors = () => {
           ))}
         </tbody>
       </Table>
+      <BirthForm setError={setError} authors={authors} />
     </div>
   )
 }

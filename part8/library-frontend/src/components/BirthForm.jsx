@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { gql, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { Button, Form } from 'react-bootstrap'
 import { EDIT_BORN_YEAR } from '../queries'
+// import Select from 'react-select'
 
-const BirthForm = ({ setError }) => {
+const BirthForm = ({ setError, authors }) => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
 
@@ -26,20 +27,40 @@ const BirthForm = ({ setError }) => {
     }
   }, [result.data])
 
+  // const options = authors.map(a => {
+  //   return { value: a.name, label: a.name }
+  // })
+
   return (
-    <Form onSubmit={submit}>
-      <Form.Group>
-        <Form.Label>name:</Form.Label>
-        <Form.Control value={name} onChange={({ target }) => setName(target.value)} />
-      </Form.Group>
+    <>
+      <h2 className='my-3'>Set birthyear</h2>
+      <Form onSubmit={submit}>
+        <Form.Select
+          aria-label='default select'
+          onChange={({ target }) => setName(target.value)}
+          defaultValue=''
+        >
+          <option value='' disabled>--Please choose an author--</option>
+          {authors.map(a => (
+            <option key={a.name} value={a.name}>{a.name}</option>
+          ))}
+        </Form.Select>
 
-      <Form.Group>
-        <Form.Label>born:</Form.Label>
-        <Form.Control value={born} type='number' onChange={({ target }) => setBorn(parseInt(target.value))} />
-      </Form.Group>
+        {/* <Select
+          placeholder='--Please choose an author--'
+          defaultInputValue={name}
+          onChange={(v) => setName(v.value)}
+          options={options}
+        /> */}
 
-      <Button variant='outline-primary' type='submit'>update author</Button>
-    </Form>
+        <Form.Group>
+          <Form.Label>born:</Form.Label>
+          <Form.Control value={born} type='number' onChange={({ target }) => setBorn(parseInt(target.value))} />
+        </Form.Group>
+
+        <Button variant='outline-primary' type='submit'>update author</Button>
+      </Form>
+    </>
   )
 }
 

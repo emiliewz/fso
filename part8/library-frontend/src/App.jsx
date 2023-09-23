@@ -24,15 +24,12 @@ const App = () => {
       <Link className='p-2 text-decoration-none' to='/create'>add book</Link>
 
       <Routes>
-        <Route path='/' element={<>
-          <Authors />
-          <BirthForm setError={notify} />
-        </>} />
+        <Route path='/' element={<Authors setError={notify} />} />
         <Route path='/books' element={<Books />} />
         <Route path='/create' element={<NewBook setError={notify} />} />
       </Routes>
 
-    </div>
+    </div >
   )
 }
 
