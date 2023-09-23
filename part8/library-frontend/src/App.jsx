@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import BirthForm from './components/BirthForm'
 import { Link, Route, Routes } from 'react-router-dom'
 import { Alert } from 'react-bootstrap'
 
@@ -23,7 +24,10 @@ const App = () => {
       <Link className='p-2 text-decoration-none' to='/create'>add book</Link>
 
       <Routes>
-        <Route path='/' element={<Authors />} />
+        <Route path='/' element={<>
+          <Authors />
+          <BirthForm setError={notify} />
+        </>} />
         <Route path='/books' element={<Books />} />
         <Route path='/create' element={<NewBook setError={notify} />} />
       </Routes>
