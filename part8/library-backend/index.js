@@ -79,14 +79,25 @@ const resolvers = {
       let book = new Book({ title, published, genres })
       const existedAuthor = await Author.findOne({ name: author })
 
-      if (!existedAuthor) {
-        const bookAuthor = new Author({ name: author })
-        await bookAuthor.save()
-        book.author = bookAuthor._id
-      } else {
-        book.author = existedAuthor._id
+      try {
+        if (!existedAuthor) {
+          const bookAuthor = new Author({ name: author })
+          await bookAuthor.save()
+          book.author = bookAuthor._id
+        } else {
+          book.author = existedAuthor._id
+        }
+        await book.save()
+      } catch (error) {
+        // throw new GraphQLError('Saving new book failed', {
+        throw new GraphQLError(error.message, {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: error.errors[0],
+            error
+          }
+        })
       }
-      await book.save()
       return Book.findOne({ title }).populate('author', { name: 1, born: 1 })
     },
 
@@ -94,9 +105,21 @@ const resolvers = {
       const { name, setBornTo } = args
       const author = await Author.findOne({ name })
       if (!author) return null
-
       author.born = setBornTo
-      return author.save()
+
+      try {
+        await author.save()
+      } catch (error) {
+        // throw new GraphQLError('Editing bornyear failed', {
+        throw new GraphQLError(error.message, {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: setBornTo,
+            error
+          }
+        })
+      }
+      return author
     }
   }
 }
