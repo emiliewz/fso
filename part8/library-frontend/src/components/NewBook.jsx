@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 
@@ -14,8 +14,10 @@ const NewBook = ({ setError }) => {
   const [addBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
-      const messages = error.graphQLErrors[0].message
-      setError(messages)
+      const gqlError = error.graphQLErrors[0]
+      gqlError.extensions.error
+        ? setError(gqlError.extensions.error.message)
+        : setError(gqlError.message)
     }
   })
 
