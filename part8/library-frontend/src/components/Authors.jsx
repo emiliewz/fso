@@ -12,7 +12,7 @@ const Authors = ({ setError }) => {
 
   return (
     <div>
-      <h2 className='mt-3 mb-3'>Authors</h2>
+      <h2 className='my-3'>Authors</h2>
       <Table striped>
         <tbody>
           <tr>

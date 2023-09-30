@@ -1,9 +1,13 @@
 import { useQuery } from '@apollo/client'
-import { Table } from 'react-bootstrap'
+import { Button, Form, Table } from 'react-bootstrap'
 import { ALL_BOOKS } from '../queries'
+import { useState } from 'react'
 
 const Books = () => {
-  const result = useQuery(ALL_BOOKS)
+  const [genre, setGenre] = useState(null)
+  const result = useQuery(ALL_BOOKS, { variables: { genre } })
+
+  const allGenres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'classic']
 
   if (result.loading) return null
 
@@ -11,9 +15,15 @@ const Books = () => {
 
   return (
     <div>
-      <h2 className='mt-3 mb-3'>books</h2>
+      <h2 className='my-3'>Books</h2>
 
-      <Table striped>
+      {genre && <h4 className='my-3'>in genre <strong>patterns</strong></h4>}
+
+      {allGenres.map(g => (
+        <Button variant='outline-info' key={g} value={g} onClick={() => setGenre(g)}>{g}</Button>
+      ))}
+
+      <Table className='mt-3' striped>
         <tbody>
           <tr>
             <th></th>
@@ -29,7 +39,8 @@ const Books = () => {
           ))}
         </tbody>
       </Table>
-    </div>
+
+    </div >
   )
 }
 
