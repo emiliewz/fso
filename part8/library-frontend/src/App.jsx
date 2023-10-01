@@ -6,6 +6,7 @@ import { Link, Route, Routes } from 'react-router-dom'
 import { Alert, Button } from 'react-bootstrap'
 import LoginForm from './components/LoginForm'
 import { useApolloClient } from '@apollo/client'
+import Recommend from './components/Recommend'
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
@@ -40,6 +41,7 @@ const App = () => {
       {!token && <Link className='p-2 text-decoration-none' to='/login'>login</Link>}
       {token && <>
         <Link className='p-2 text-decoration-none' to='/create'>add book</Link>
+        <Link className='p-2 text-decoration-none' to='/recommend'>recommend</Link>
         <Button size='sm' variant='outline-dark' onClick={logout}>logout</Button>
       </>}
 
@@ -47,6 +49,7 @@ const App = () => {
         <Route path='/' element={<Authors setError={notify} />} />
         <Route path='/books' element={<Books />} />
         <Route path='/create' element={<NewBook setError={notify} />} />
+        <Route path='/recommend' element={<Recommend />} />
         <Route path='/login' element={<LoginForm setError={notify} setToken={setToken} />} />
       </Routes>
 
