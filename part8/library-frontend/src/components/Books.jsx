@@ -7,7 +7,7 @@ const Books = () => {
   const [genre, setGenre] = useState(null)
   const result = useQuery(ALL_BOOKS, { variables: { genre } })
 
-  const allGenres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'classic']
+  const allGenres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'classic', 'all genres']
 
   if (result.loading) return null
 
@@ -20,7 +20,9 @@ const Books = () => {
       {genre && <h4 className='my-3'>in genre <strong>patterns</strong></h4>}
 
       {allGenres.map(g => (
-        <Button variant='outline-info' key={g} value={g} onClick={() => setGenre(g)}>{g}</Button>
+        <Button variant='outline-info' key={g} value={g} onClick={() => {
+          g !== 'all genres' ? setGenre(g) : setGenre(null)
+        }}>{g}</Button>
       ))}
 
       <Table className='mt-3' striped>
