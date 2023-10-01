@@ -11,20 +11,30 @@ const NewBook = ({ setError }) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-  const [addBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+  const [createBook] = useMutation(CREATE_BOOK, {
+    // refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
-      const gqlError = error.graphQLErrors[0]
-      gqlError.extensions.error
-        ? setError(gqlError.extensions.error.message)
-        : setError(gqlError.message)
-    }
+      const messages = error.graphQLErrors.map(e => e.message).join('/n')
+      setError(messages)
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS, variables: { genre: null } }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        }
+      }),
+      cache.updateQuery({query: ALL_AUTHORS}, ({allAuthors}) => {
+        return {
+          allAuthors: allAuthors.concat(response.data.addBook.author)
+        }
+      })
+    },
   })
 
   const submit = async (event) => {
     event.preventDefault()
 
-    addBook({ variables: { title, author, published, genres } })
+    createBook({ variables: { title, author, published, genres } })
 
     setTitle('')
     setPublished('')

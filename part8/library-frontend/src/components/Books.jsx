@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { Button, Form, Table } from 'react-bootstrap'
+import { Button, Table } from 'react-bootstrap'
 import { ALL_BOOKS } from '../queries'
 import { useState } from 'react'
 
@@ -10,7 +10,7 @@ const Books = () => {
   const allGenres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'classic', 'all genres']
 
   if (result.loading) return null
-
+  
   const books = result.data.allBooks
 
   return (
