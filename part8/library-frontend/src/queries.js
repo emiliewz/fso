@@ -104,3 +104,11 @@ export const ME = gql`
   }
   ${USER_DETAILS}
 `
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`

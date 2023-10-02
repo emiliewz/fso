@@ -4,23 +4,19 @@ import { Table } from 'react-bootstrap'
 import { ALL_BOOKS, ME } from '../queries'
 
 const Recommend = () => {
-  const [genre, setGenre] = useState('')
+  const [favoriteGenre, setFavoriteGenre] = useState('')
   const [books, setBooks] = useState([])
-  
+
   const result1 = useQuery(ME)
 
   useEffect(() => {
-    if (result1.data) {
-      setGenre(result1.data.me.favoriteGenre)
-    }
+    if (result1.data) setFavoriteGenre(result1.data.me.favoriteGenre)
   }, [result1.data])
 
-  const result = useQuery(ALL_BOOKS, { variables: { genre } })
+  const result = useQuery(ALL_BOOKS, { variables: { genre: favoriteGenre } })
 
   useEffect(() => {
-    if (result.data) {
-      setBooks(result.data.allBooks)
-    }
+    if (result.data) setBooks(result.data.allBooks)
   }, [result.data])
 
   return (

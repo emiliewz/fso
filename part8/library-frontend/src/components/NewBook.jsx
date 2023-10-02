@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { gql, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
 import { Button, Form, InputGroup } from 'react-bootstrap'
+import { updateCache } from '../App'
 
 
 const NewBook = ({ setError }) => {
@@ -12,22 +13,12 @@ const NewBook = ({ setError }) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    // refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map(e => e.message).join('/n')
       setError(messages)
     },
     update: (cache, response) => {
-      cache.updateQuery({ query: ALL_BOOKS, variables: { genre: null } }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
-        }
-      }),
-      cache.updateQuery({query: ALL_AUTHORS}, ({allAuthors}) => {
-        return {
-          allAuthors: allAuthors.concat(response.data.addBook.author)
-        }
-      })
+      updateCache(cache, { query: ALL_BOOKS }, response.data.addBook)
     },
   })
 

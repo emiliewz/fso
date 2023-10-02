@@ -10,7 +10,7 @@ const Books = () => {
   const allGenres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'classic', 'all genres']
 
   if (result.loading) return null
-  
+
   const books = result.data.allBooks
 
   return (

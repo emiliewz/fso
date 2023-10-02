@@ -6,16 +6,40 @@ import Recommend from './components/Recommend'
 import Notify from './components/Notify'
 
 import { Link, Route, Routes } from 'react-router-dom'
-import { Alert, Button } from 'react-bootstrap'
-import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { Button } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
-import { ALL_AUTHORS, ALL_BOOKS } from './queries'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
+import { useApolloClient, useSubscription, useQuery } from '@apollo/client'
+
+// function that takes care of manipulating cache
+export const updateCache = (cache, query, addedBook) => {
+  // helper that is used to eliminate saving same person twice
+  const uniqByName = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.name
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByName(allBooks.concat(addedBook)),
+    }
+  })
+
+  // cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+  //   return {
+  //     allAuthors: allAuthors.concat(response.data.addBook.author)
+  //   }
+  // })
+}
 
 const App = () => {
-  const result = useQuery(ALL_BOOKS, ALL_AUTHORS)
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+  const result = useQuery(ALL_BOOKS)
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token')
@@ -24,10 +48,19 @@ const App = () => {
     }
   }, [])
 
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      notify(`${addedBook.title} added`,'info')
+
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+    }
+  })
+
   if (result.loading) return <div>loading...</div>
 
-  const notify = (message) => {
-    setErrorMessage(message)
+  const notify = (message,type) => {
+    setErrorMessage({message,type})
     setTimeout(() => {
       setErrorMessage(null)
     }, 10000)

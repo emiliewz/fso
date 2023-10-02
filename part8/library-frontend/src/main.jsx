@@ -19,19 +19,20 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-const wsLink = new GraphQLWsLink(createClient({
-  url: 'ws://localhost:4000'
-}))
-
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000',
 })
+
+const wsLink = new GraphQLWsLink(createClient({
+  url: 'ws://localhost:4000'
+}))
 
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query)
     return (
-      definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
     )
   },
   wsLink,
