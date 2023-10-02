@@ -51,7 +51,6 @@ const resolvers = {
           book.author = existedAuthor._id
         }
         await book.save()
-        const savedBook = await Book.findOne({ title }).populate('author', { name: 1, born: 1 })
       } catch (error) {
         // throw new GraphQLError('Saving new book failed', {
         throw new GraphQLError(error.message, {
@@ -62,6 +61,8 @@ const resolvers = {
           }
         })
       }
+
+      const savedBook = await Book.findOne({ title }).populate('author', { name: 1, born: 1 })
 
       pubsub.publish('BOOK_ADDED', { bookAdded: savedBook })
 
@@ -135,7 +136,7 @@ const resolvers = {
 
   Subscription: {
     bookAdded: {
-      subscription: () => pubsub.asyncIterator('BOOK_ADDED')
+      subscribe: () => pubsub.asyncIterator('BOOK_ADDED')
     }
   },
 }
