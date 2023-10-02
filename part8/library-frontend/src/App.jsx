@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import LoginForm from './components/LoginForm'
+import Recommend from './components/Recommend'
+import Notify from './components/Notify'
+
 import { Link, Route, Routes } from 'react-router-dom'
 import { Alert, Button } from 'react-bootstrap'
-import LoginForm from './components/LoginForm'
-import { useApolloClient } from '@apollo/client'
-import Recommend from './components/Recommend'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 const App = () => {
+  const result = useQuery(ALL_BOOKS, ALL_AUTHORS)
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
@@ -19,6 +23,8 @@ const App = () => {
       setToken(token)
     }
   }, [])
+
+  if (result.loading) return <div>loading...</div>
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -54,16 +60,6 @@ const App = () => {
       </Routes>
 
     </div >
-  )
-}
-
-const Notify = ({ info }) => {
-  if (!info) return null
-
-  return (
-    <Alert variant='danger'>
-      {info}
-    </Alert>
   )
 }
 

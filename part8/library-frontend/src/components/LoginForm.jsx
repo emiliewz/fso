@@ -42,6 +42,7 @@ const LoginForm = ({ setToken, setError }) => {
       <Form.Group className='mb-3'>
         <Form.Label>Password:</Form.Label>
         <Form.Control
+          type='password'
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
