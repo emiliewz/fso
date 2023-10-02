@@ -18,7 +18,7 @@ const AUTHOR_DETAILS = gql`
     name
     id
     born
-    # bookCount
+    bookCount
   }
 `
 
