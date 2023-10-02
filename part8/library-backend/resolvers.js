@@ -13,19 +13,18 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       if (!args.author && !args.genre) return Book.find({}).populate('author', { name: 1, born: 1 })
-      if (args.author && args.genre) return books.filter(b => b.author === args.author && b.genres.includes(args.genre))
-      if (args.author) return books.filter(b => b.author === args.author)
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author }).populate('books')
+        const books = author.books
+        if (args.genre) {
+          return books.filter(b => b.genres.includes(args.genre))
+        }
+        return books
+      }
       return Book.find({ genres: args.genre }).populate('author', { name: 1, born: 1 })
     },
     allAuthors: async () => Author.find({}),
     me: (root, args, context) => context.currentUser
-  },
-
-  Author: {
-    bookCount: ({ name }) => {
-      const booksByAnthor = books.filter(b => b.author === name)
-      return booksByAnthor.length
-    }
   },
 
   Mutation: {
@@ -47,13 +46,18 @@ const resolvers = {
           const bookAuthor = new Author({ name: author })
           await bookAuthor.save()
           book.author = bookAuthor._id
+          bookAuthor.books = [book._id]
+          bookAuthor.bookCount = 1
+          await bookAuthor.save()
         } else {
           book.author = existedAuthor._id
+          existedAuthor.books = existedAuthor.books.concat(book._id)
+          existedAuthor.bookCount = existedAuthor.books.length
+          await existedAuthor.save()
         }
         await book.save()
       } catch (error) {
-        // throw new GraphQLError('Saving new book failed', {
-        throw new GraphQLError(error.message, {
+        throw new GraphQLError('Saving new book failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
             invalidArgs: error.errors[0],
@@ -88,8 +92,7 @@ const resolvers = {
       try {
         await author.save()
       } catch (error) {
-        // throw new GraphQLError('Editing bornyear failed', {
-        throw new GraphQLError(error.message, {
+        throw new GraphQLError('Editing bornyear failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
             invalidArgs: setBornTo,

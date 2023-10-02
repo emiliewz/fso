@@ -51,7 +51,7 @@ let books = [
     published: 2002,
     author: 'Robert Martin',
     id: "afa5b6f5-344d-11e9-a414-719c6709cf3e",
-    genres: ['agile', 'patterns', 'design']
+    genres: 2002
   },
   {
     title: 'Refactoring, edition 2',
