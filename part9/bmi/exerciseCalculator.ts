@@ -28,7 +28,7 @@ const parseArguments2 = (args: string[]): BmiExerciseData => {
   }
 };
 
-const exerciseCalculator = (dailyExercise: number[], goal: number): Result => {
+export const exerciseCalculator = (dailyExercise: number[], goal: number): Result => {
   const periodLength = dailyExercise.length;
   const trainingDays = dailyExercise.filter(e => e > 0).length;
   const average = dailyExercise.reduce((a,b) => a+b) / dailyExercise.length;
@@ -38,12 +38,12 @@ const exerciseCalculator = (dailyExercise: number[], goal: number): Result => {
     rating = 3;
     ratingDescription = 'well done!';
   } else {
-    if (trainingDays >= trainingDays / 2) {
+    if (trainingDays >= trainingDays / 2 && average >= goal / 2) {
       rating = 2;
       ratingDescription = 'not too bad but could be better';
     } else {
       rating = 1;
-      ratingDescription = 'keep trying!';
+      ratingDescription = 'bad';
     }
   }
   const target = goal;
