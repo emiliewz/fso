@@ -1,4 +1,4 @@
-export const isNotNumber = (argument: any): boolean => isNaN(Number(argument))
+export const isNotNumber = (argument: unknown): boolean => isNaN(Number(argument));
 
 export const calculateBmi = (height: number, weight: number): string => {
   const bmi = weight/(height/100)**2;
@@ -9,4 +9,4 @@ export const calculateBmi = (height: number, weight: number): string => {
   if (bmi <= 29.9) return 'Overweight (Pre-obese)';
   if (bmi <= 39.9) return 'Obese (Class II)';
   return 'Obese (Class III)';
-}
+};
