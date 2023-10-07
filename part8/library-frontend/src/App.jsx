@@ -39,7 +39,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
-  const result = useQuery(ALL_BOOKS)
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token')
@@ -56,8 +55,6 @@ const App = () => {
       updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     }
   })
-
-  if (result.loading) return <div>loading...</div>
 
   const notify = (message,type) => {
     setErrorMessage({message,type})
