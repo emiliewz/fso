@@ -1,6 +1,15 @@
 GET http://localhost:3003/api/blogs
 
 ###
+POST http://localhost:3003/api/blogs/64fd00865bcc9d839c9274b2/comments
+Content-Type: application/json
+
+{
+  "comment":"this is a new comment"
+}
+
+
+###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NGRlNDcyYTQ1MjdhNTk3MTE3YWZmZDMiLCJpYXQiOjE2OTIzMDIxMjksImV4cCI6MTY5MjMwNTcyOX0.RAoR0KqOUwN6RTp1vDBTgDl783Dy5NfYj-yoYWmEUM4
