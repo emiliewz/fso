@@ -9,16 +9,37 @@ const assertNever = (value: never): never => {
 const renderPart = (part: CoursePart) => {
   switch (part.kind) {
     case 'basic':
-      return <p><em>{part.description}</em></p>
+      return <p>
+          <strong>{part.name} {part.exerciseCount}</strong>
+          <br />
+          <em>{part.description}</em>
+        </p>
     case 'group':
-      return <p>project exercises {part.groupProjectCount}</p>
+      return <p>
+        <strong>{part.name} {part.exerciseCount}</strong>
+        <br />
+        project exercises {part.groupProjectCount}
+      </p>
     case 'background':
       return (
-          <>
-            <p>{part.description}</p>
-            <p>{part.backgroundMaterial}</p>
-          </>
-        )
+        <p>
+          <strong>{part.name} {part.exerciseCount}</strong>
+          <br />
+          <em>{part.description}</em>
+          <br />
+          background material: {part.backgroundMaterial}
+        </p>
+      )
+    case 'special':
+      return (
+        <p>
+          <strong>{part.name} {part.exerciseCount}</strong>
+          <br />
+          <em>{part.description}</em>
+          <br />
+          required skills: {part.requirements.join(', ')}
+        </p>
+      )
     default:
       return assertNever(part)
   }

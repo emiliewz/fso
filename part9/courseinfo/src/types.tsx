@@ -21,4 +21,9 @@ interface CoursePartBackground extends CoursePartDescribe {
   kind: 'background'
 }
 
-export type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground
+interface CoursePartRequirement extends CoursePartDescribe {
+  requirements: string []
+  kind: 'special'
+}
+
+export type CoursePart = CoursePartBasic | CoursePartGroup | CoursePartBackground | CoursePartRequirement
