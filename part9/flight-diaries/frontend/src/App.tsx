@@ -15,8 +15,7 @@ const App = () => {
 
   return (
     <div>
-      App
-      <NewEntry />
+      <NewEntry diaries={diaries} setDiaries={setDiaries}/>
       <Diaries diaries={diaries}/>
     </div>
   )
