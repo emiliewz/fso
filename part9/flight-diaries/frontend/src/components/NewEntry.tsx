@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { createNewDiary } from '../diaryService'
 import { DiaryEntry, Visibility, Weather } from '../types'
+import axios from 'axios'
 
-const NewEntry = ({ diaries, setDiaries }: { 
+const NewEntry = ({ diaries, setDiaries, setMsg }: { 
     diaries: DiaryEntry[]
-    setDiaries: React.Dispatch<React.SetStateAction<DiaryEntry[]>>}) => {
+    setDiaries: React.Dispatch<React.SetStateAction<DiaryEntry[]>>
+    setMsg: React.Dispatch<React.SetStateAction<string>>
+  }) => {
   const [date, setDate] = useState('')
   const [weather, setWeather] = useState<Weather>('' as Weather)
   const [visibility, setVisibility] = useState<Visibility>('' as Visibility)
@@ -16,6 +19,13 @@ const NewEntry = ({ diaries, setDiaries }: {
     createNewDiary({ date, weather, visibility, comment})
     .then( data => {
       setDiaries(diaries.concat(data))
+    })
+    .catch(e => {
+      let errorMessage = ''
+      if (axios.isAxiosError(e)) {
+        errorMessage += e.response?.data
+      } 
+      setMsg(errorMessage)
     })
   }
 
