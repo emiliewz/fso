@@ -15,12 +15,6 @@ const PatientPage = ({ patient }: { patient: Patient | null | undefined, diagnos
     }
   }, [patient]);
 
-  const assertNever = (value: never): never => {
-    throw new Error(
-      `Unhandled discriminated union member: ${JSON.stringify(value)}`
-    );
-  };
-
   const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
     switch (entry.type) {
       case 'Hospital':
@@ -65,6 +59,12 @@ const PatientPage = ({ patient }: { patient: Patient | null | undefined, diagnos
       ))} */}
       {entries?.map(entry => EntryDetails({entry}))}
     </div>
+  );
+};
+
+export const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
   );
 };
 

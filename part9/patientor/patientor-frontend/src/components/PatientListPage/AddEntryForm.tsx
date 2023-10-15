@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import { Alert, TextField, Button, Grid, Card } from '@mui/material';
+import { Alert, TextField, Button, Grid, Card, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import patientService from '../../services/patients';
-import { Entry, EntryWithoutId, HealthCheckRating } from '../../types';
+import { BaseEntry, Entry, EntryWithoutId, HealthCheckRating } from '../../types';
 import axios from 'axios';
+import { assertNever } from './PatientPage';
 
 interface Props {
   id : string
   setEntries: React.Dispatch<React.SetStateAction<Entry[]>>
 }
+
+type BaseEntryWithoutId = Omit<BaseEntry, 'id'>;
+
+type Type = 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
 
 const AddEntryForm = ({ id, setEntries }: Props) => {
   const [description, setDescription] = useState('');
@@ -16,26 +21,68 @@ const AddEntryForm = ({ id, setEntries }: Props) => {
   const [healthCheckRating, setHealthCheckRating] = useState('');
   const [diagnosisCodes, setDiagnosisCodes] = useState(['']);
   const [error, setError] = useState('');
+  const [type, setType] = useState<Type>('HealthCheck');
+  const [employee, setEmployee] = useState('');
+  // const [sickLeave, setSickLeave] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  // const [discharge, setDischarge] = useState('');
+  const [dischargeDate, setDischargeDate] = useState('');
+  const [dischargeCriteria, setDischargeCriteria] = useState('');
+  
 
   const notifyWith = (e: string) => {
     setError(e);
-    setTimeout(()=> setError(''), 3000);
+    setTimeout(()=> setError(''), 5000);
   };
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
-    const healthCheckRate = Object.values(HealthCheckRating).find(h => h === Number(healthCheckRating));
-    
-    const entry: EntryWithoutId = {
+    const baseEntry: BaseEntryWithoutId = {
       description,
       date,
       specialist,
       diagnosisCodes,
-      healthCheckRating: healthCheckRate as HealthCheckRating,
-      type: 'HealthCheck'
     };
     
+    switch (type) {
+      case 'HealthCheck':
+        const healthCheckRate = Object.values(HealthCheckRating).find(h => h === Number(healthCheckRating));
+        const newHelathCheckEntry: EntryWithoutId = {
+          ...baseEntry,
+          healthCheckRating: healthCheckRate as HealthCheckRating,
+          type: 'HealthCheck',
+        };
+        createEntry(newHelathCheckEntry);
+        break;
+      case 'OccupationalHealthcare':
+        const newOccupationalHealthcareEntry: EntryWithoutId = {
+          ...baseEntry,
+          employerName: employee,
+          sickLeave: {
+            startDate, endDate
+          },
+          type: 'OccupationalHealthcare',
+        };
+        createEntry(newOccupationalHealthcareEntry);
+        break;
+      case 'Hospital':
+        const newHospitalEntry: EntryWithoutId = {
+          ...baseEntry,
+          discharge: {
+            date: dischargeDate, criteria: dischargeCriteria
+          },
+          type: 'Hospital',
+        };
+        createEntry(newHospitalEntry);
+        break ;
+      default:
+        assertNever(type);
+    }
+  };
+
+  const createEntry = async (entry: EntryWithoutId) => {
     try {
       const result = await patientService.addEntry(id, entry);
       setEntries(v => v.concat(result));
@@ -56,11 +103,30 @@ const AddEntryForm = ({ id, setEntries }: Props) => {
     }
   };
 
+  const handleType = (
+    event: React.MouseEvent<HTMLElement>,
+    newType: string | null,
+  ) => {
+    setType(newType as Type);
+  };
+
   return (
     <Card sx={[{ minWidth: 275 }, { mb: 1.5 }]}>
       {error && <Alert severity='error'>{error}</Alert>}
       <h2 style={{marginLeft: 10}}>New HealthCheck entry</h2>
       <form onSubmit={handleSubmit}>
+        <ToggleButtonGroup
+          color='primary'
+          value={type}
+          exclusive
+          onChange={handleType}
+          aria-label='Type'
+        >
+          <ToggleButton value='HealthCheck'>HealthCheck</ToggleButton>
+          <ToggleButton value='OccupationalHealthcare'>OccupationalHealthcare</ToggleButton>
+          <ToggleButton value='Hospital'>Hospital</ToggleButton>
+        </ToggleButtonGroup>
+
         <TextField
           label='Discription'
           fullWidth
@@ -79,18 +145,56 @@ const AddEntryForm = ({ id, setEntries }: Props) => {
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
-        <TextField
+
+        {type === 'HealthCheck' && <TextField
           label='Healthcheck rating'
           fullWidth
           value={healthCheckRating}
           onChange={({ target }) => setHealthCheckRating(target.value)}
-        />
+        />}
+
         <TextField
           label='Diagnosis codes'
           fullWidth
           value={diagnosisCodes}
           onChange={({ target }) => setDiagnosisCodes([...target.value])}
         />
+
+        {type === 'OccupationalHealthcare' && <>
+          <TextField
+            label='Employee'
+            fullWidth
+            value={employee}
+            onChange={({ target }) => setEmployee(target.value)}
+          />
+          <TextField
+            label='SickLeaveStart'
+            fullWidth
+            value={startDate}
+            onChange={({ target }) => setStartDate(target.value)}
+          />
+          <TextField
+            label='SickLeaveEnd'
+            fullWidth
+            value={endDate}
+            onChange={({ target }) => setEndDate(target.value)}
+          />
+        </>}
+
+        {type === 'Hospital' && <>
+          <TextField
+            label='DischargeDate'
+            fullWidth
+            value={dischargeDate}
+            onChange={({ target }) => setDischargeDate(target.value)}
+          />
+          <TextField
+            label='DischargeCriteria'
+            fullWidth
+            value={dischargeCriteria}
+            onChange={({ target }) => setDischargeCriteria(target.value)}
+          />
+        </>}
 
         <Grid>
           <Grid item>
