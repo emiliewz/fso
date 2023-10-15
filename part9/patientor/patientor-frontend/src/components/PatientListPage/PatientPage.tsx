@@ -1,8 +1,31 @@
-import { Female, Male, Transgender } from "@mui/icons-material";
-import { Diagnosis, Patient } from "../../types";
+import { Female, Male, Transgender } from '@mui/icons-material';
+import { Diagnosis, Patient, Entry } from '../../types';
+import HospitalEntry from './HospitalEntry';
+import HealthCheckEntry from './HealthCheckEntry';
+import OccupationalHealthcareEntry from './OccupationalHealthcareEntry';
 
 const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefined, diagnoses: Diagnosis[] | undefined }) => {
   if ( !patient ) return null;
+
+
+  const assertNever = (value: never): never => {
+    throw new Error(
+      `Unhandled discriminated union member: ${JSON.stringify(value)}`
+    );
+  };
+
+  const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
+    switch (entry.type) {
+      case 'Hospital':
+        return <HospitalEntry entry={entry} key={entry.id}/>;
+      case 'OccupationalHealthcare':
+        return <OccupationalHealthcareEntry entry={entry} key={entry.id}/>;
+      case 'HealthCheck':
+        return <HealthCheckEntry entry={entry} key={entry.id}/>;
+      default:
+        return assertNever(entry);
+    }
+  };
 
   return (
     <div>
@@ -19,7 +42,7 @@ const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefin
       </p>
 
       <h3>entries</h3>
-      {patient.entries.map(e => (
+      {/* {patient.entries.map(e => (
         <div key={e.id}>
           {e.date} <em>{e.description}</em>
           <ul>
@@ -28,7 +51,8 @@ const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefin
             ))}
           </ul>
         </div>
-      ))}
+      ))} */}
+      {patient.entries.map(entry => EntryDetails({entry}))}
     </div>
   );
 };
