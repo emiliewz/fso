@@ -1,7 +1,7 @@
 import { Female, Male, Transgender } from "@mui/icons-material";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 
-const PatientPage = ({ patient }: { patient: Patient | null | undefined }) => {
+const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefined, diagnoses: Diagnosis[] | undefined }) => {
   if ( !patient ) return null;
 
   return (
@@ -20,14 +20,14 @@ const PatientPage = ({ patient }: { patient: Patient | null | undefined }) => {
 
       <h3>entries</h3>
       {patient.entries.map(e => (
-        <>
+        <div key={e.id}>
           {e.date} <em>{e.description}</em>
           <ul>
             {e.diagnosisCodes?.map(d => (
-              <li>{d}</li>
+              <li key={`${e.id}${d}`}>{d} {diagnoses?.find(p => p.code === d)?.name}</li>
             ))}
           </ul>
-        </>
+        </div>
       ))}
     </div>
   );
