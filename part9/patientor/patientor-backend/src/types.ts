@@ -1,4 +1,4 @@
-export interface Disgnosis {
+export interface Diagnosis {
   code: string,
   name: string,
   latin?: string
@@ -10,12 +10,12 @@ export enum Gender {
   Other = 'other',
 }
 
-export interface discharge {
+export interface Discharge {
   date: string,
   criteria: string,
 }
 
-export interface sickLeave {
+export interface SickLeave {
   startDate: string,
   endDate: string,
 }
@@ -25,10 +25,10 @@ export interface BaseEntry {
   description: string,
   date: string,
   specialist: string,
-  diagnosisCodes?: Array<Disgnosis['code']>,
+  diagnosisCodes?: Array<Diagnosis['code']>,
 }
 
-export enum healthCheckRating {
+export enum HealthCheckRating {
   'Healthy' = 0,
   'LowRisk' = 1,
   'HighRisk' = 2,
@@ -37,18 +37,18 @@ export enum healthCheckRating {
 
 interface HealthCheckEntry extends BaseEntry {
   type: 'HealthCheck',
-  healthCheckRating: healthCheckRating
+  healthCheckRating: HealthCheckRating
 }
 
 interface OccupationalHealthcareEntry extends BaseEntry {
   type: 'OccupationalHealthcare',
   employerName: string,
-  sickLeave?: sickLeave,
+  sickLeave?: SickLeave,
 }
 
 interface HospitalEntry extends BaseEntry {
   type: 'Hospital',
-  discharge: discharge,
+  discharge: Discharge,
 }
 
 export type Entry = HospitalEntry | OccupationalHealthcareEntry | HealthCheckEntry;
