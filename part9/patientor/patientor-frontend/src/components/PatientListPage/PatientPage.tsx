@@ -3,10 +3,17 @@ import { Diagnosis, Patient, Entry } from '../../types';
 import HospitalEntry from './HospitalEntry';
 import HealthCheckEntry from './HealthCheckEntry';
 import OccupationalHealthcareEntry from './OccupationalHealthcareEntry';
+import AddEntryForm from './AddEntryForm';
+import { useEffect, useState } from 'react';
 
-const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefined, diagnoses: Diagnosis[] | undefined }) => {
-  if ( !patient ) return null;
+const PatientPage = ({ patient }: { patient: Patient | null | undefined, diagnoses: Diagnosis[] | undefined }) => {
+  const [entries, setEntries] = useState<Entry[]>([]);
 
+  useEffect(() => {
+    if (patient?.entries){
+      setEntries(patient.entries);
+    }
+  }, [patient]);
 
   const assertNever = (value: never): never => {
     throw new Error(
@@ -27,6 +34,8 @@ const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefin
     }
   };
 
+  if ( !patient ) return null;
+
   return (
     <div>
       <h2>{patient.name} {
@@ -41,6 +50,8 @@ const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefin
         occupation: {patient.occupation}
       </p>
 
+      <AddEntryForm id={patient.id} setEntries={setEntries}/>
+
       <h3>entries</h3>
       {/* {patient.entries.map(e => (
         <div key={e.id}>
@@ -52,7 +63,7 @@ const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefin
           </ul>
         </div>
       ))} */}
-      {patient.entries.map(entry => EntryDetails({entry}))}
+      {entries?.map(entry => EntryDetails({entry}))}
     </div>
   );
 };
