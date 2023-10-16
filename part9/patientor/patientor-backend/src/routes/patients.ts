@@ -1,7 +1,6 @@
 import patientService from '../services/patientService';
 import express from 'express';
 import helper from '../utils';
-import { EntryWithoutId } from '../types';
 const router = express.Router();
 
 router.get('/', (_req, res) => {
@@ -32,9 +31,17 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/:id/entries', (req, res) => {
-  const entries: EntryWithoutId = helper.toNewEntry(req.body);
-  const entry = patientService.addEntry(req.params.id, entries);
-  res.send(entry);
+  try {
+    const entries = helper.toNewEntry(req.body);
+    const entry = patientService.addEntry(req.params.id, entries);
+    res.send(entry);
+  } catch (error: unknown) {
+    let errorMessage = 'Something went wrong';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    res.status(400).send(errorMessage);
+  }
 });
 
 export default router;

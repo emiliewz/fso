@@ -1,32 +1,32 @@
 import { useState } from 'react';
-import { Alert, TextField, Button, Grid, Card, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Alert, TextField, Button, Grid, Card, ToggleButtonGroup, ToggleButton, Input } from '@mui/material';
 import patientService from '../../services/patients';
-import { BaseEntry, Entry, EntryWithoutId, HealthCheckRating } from '../../types';
+import { BaseEntry, Diagnosis, Entry, EntryWithoutId, HealthCheckRating } from '../../types';
 import axios from 'axios';
 import { assertNever } from './PatientPage';
+import DiagnosesSelect from './DiagnosesSelect';
 
 interface Props {
   id : string
-  setEntries: React.Dispatch<React.SetStateAction<Entry[]>>
+  setEntries: React.Dispatch<React.SetStateAction<Entry[]>>,
+  diagnoses: Diagnosis[]
 }
 
 type BaseEntryWithoutId = Omit<BaseEntry, 'id'>;
 
 type Type = 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
 
-const AddEntryForm = ({ id, setEntries }: Props) => {
+const AddEntryForm = ({ id, setEntries, diagnoses }: Props) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpecialist] = useState('');
   const [healthCheckRating, setHealthCheckRating] = useState('');
-  const [diagnosisCodes, setDiagnosisCodes] = useState(['']);
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [type, setType] = useState<Type>('HealthCheck');
   const [employee, setEmployee] = useState('');
-  // const [sickLeave, setSickLeave] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  // const [discharge, setDischarge] = useState('');
   const [dischargeDate, setDischargeDate] = useState('');
   const [dischargeCriteria, setDischargeCriteria] = useState('');
   
@@ -133,10 +133,10 @@ const AddEntryForm = ({ id, setEntries }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label='Date'
+          Date: <Input
           fullWidth
           value={date}
+          type='date'
           onChange={({ target }) => setDate(target.value)}
         />
         <TextField
@@ -149,16 +149,13 @@ const AddEntryForm = ({ id, setEntries }: Props) => {
         {type === 'HealthCheck' && <TextField
           label='Healthcheck rating'
           fullWidth
+          type='number'
+          InputProps={{ inputProps: { min: 0, max: 3 } }}
           value={healthCheckRating}
           onChange={({ target }) => setHealthCheckRating(target.value)}
         />}
 
-        <TextField
-          label='Diagnosis codes'
-          fullWidth
-          value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes([...target.value])}
-        />
+        <DiagnosesSelect diagnoses={diagnoses} diagnosisCodes={diagnosisCodes} setDiagnosisCodes={setDiagnosisCodes} />
 
         {type === 'OccupationalHealthcare' && <>
           <TextField
@@ -167,25 +164,25 @@ const AddEntryForm = ({ id, setEntries }: Props) => {
             value={employee}
             onChange={({ target }) => setEmployee(target.value)}
           />
-          <TextField
-            label='SickLeaveStart'
+            SickLeaveStart: <Input
             fullWidth
             value={startDate}
+            type='date'
             onChange={({ target }) => setStartDate(target.value)}
           />
-          <TextField
-            label='SickLeaveEnd'
+            SickLeaveEnd: <Input
             fullWidth
             value={endDate}
+            type='date'
             onChange={({ target }) => setEndDate(target.value)}
           />
         </>}
 
         {type === 'Hospital' && <>
-          <TextField
-            label='DischargeDate'
+          DischargeDate: <Input
             fullWidth
             value={dischargeDate}
+            type='date'
             onChange={({ target }) => setDischargeDate(target.value)}
           />
           <TextField

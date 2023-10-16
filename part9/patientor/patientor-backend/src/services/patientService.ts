@@ -28,15 +28,15 @@ const findById = (id: string): PatientEntry | undefined => {
   return entry;
 };
 
-const addEntry = (id: string, entry: EntryWithoutId): PatientEntry | undefined => {
+const addEntry = (id: string, entry: EntryWithoutId): Entry => {
   const patient: PatientEntry | undefined = findById(id);
   const entryId = uuid();
   const newEntry: Entry = {
     id: entryId,
     ...entry
   };
-  if (patient) patient.entries = patient.entries.concat(newEntry);
-  return patient;
+  patient?.entries.push(newEntry);
+  return newEntry;
 };
 
 export default {

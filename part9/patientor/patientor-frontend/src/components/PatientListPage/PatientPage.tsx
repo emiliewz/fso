@@ -6,7 +6,7 @@ import OccupationalHealthcareEntry from './OccupationalHealthcareEntry';
 import AddEntryForm from './AddEntryForm';
 import { useEffect, useState } from 'react';
 
-const PatientPage = ({ patient }: { patient: Patient | null | undefined, diagnoses: Diagnosis[] | undefined }) => {
+const PatientPage = ({ patient, diagnoses }: { patient: Patient | null | undefined, diagnoses: Diagnosis[] | undefined }) => {
   const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const PatientPage = ({ patient }: { patient: Patient | null | undefined, diagnos
     }
   };
 
-  if ( !patient ) return null;
+  if ( !patient || !diagnoses ) return null;
 
   return (
     <div>
@@ -44,7 +44,7 @@ const PatientPage = ({ patient }: { patient: Patient | null | undefined, diagnos
         occupation: {patient.occupation}
       </p>
 
-      <AddEntryForm id={patient.id} setEntries={setEntries}/>
+      <AddEntryForm id={patient.id} setEntries={setEntries} diagnoses={diagnoses} />
 
       <h3>entries</h3>
       {/* {patient.entries.map(e => (
