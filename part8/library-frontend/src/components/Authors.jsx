@@ -29,7 +29,7 @@ const Authors = ({ setError }) => {
           ))}
         </tbody>
       </Table>
-      <BirthForm setError={setError} authors={authors} />
+      {localStorage.getItem('library-user-token') && <BirthForm setError={setError} authors={authors} />}
     </div>
   )
 }

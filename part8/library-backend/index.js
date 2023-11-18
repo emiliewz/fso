@@ -5,6 +5,7 @@ const { makeExecutableSchema } = require('@graphql-tools/schema')
 const express = require('express')
 const cors = require('cors')
 const http = require('http')
+const path = require('path')
 
 const { WebSocketServer } = require('ws')
 const { useServer } = require('graphql-ws/lib/use/ws')
@@ -66,6 +67,7 @@ const start = async () => {
     '/',
     cors(),
     express.json(),
+    express.static(__dirname + '/dist'),
     expressMiddleware(server, {
       context: async ({ req, res }) => {
         const auth = req ? req.headers.authorization : null
@@ -79,6 +81,10 @@ const start = async () => {
       }
     })
   )
+
+  // app.use('/*', function (req, res) {
+  //   res.sendFile(path.join(__dirname + '/dist/index.html'))
+  // })
 
   const PORT = process.env.PORT
 
