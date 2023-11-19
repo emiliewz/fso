@@ -22,14 +22,6 @@ export const updateCache = (cache, addedBook) => {
     })
   }
 
-  const uniqByName = (a) => {
-    let seen = new Set()
-    return a.filter((item) => {
-      let k = item.name
-      return seen.has(k) ? false : seen.add(k)
-    })
-  }
-
   cache.updateQuery({ query: ALL_BOOKS, variables: { genre: null } }, ({ allBooks }) => {
     return {
       allBooks: uniqByTitle(allBooks.concat(addedBook)),
@@ -38,7 +30,7 @@ export const updateCache = (cache, addedBook) => {
 
   cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
     return {
-      allAuthors: uniqByName(allAuthors.concat(addedBook.author))
+      allAuthors: allAuthors.concat(addedBook.author)
     }
   })
 }
