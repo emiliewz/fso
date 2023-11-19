@@ -5,13 +5,22 @@ import { useState } from 'react'
 
 const Books = () => {
   const [genre, setGenre] = useState(null)
-  const result = useQuery(ALL_BOOKS, { variables: { genre } })
+  const result = useQuery(ALL_BOOKS, {
+    variables: { genre: null }
+  })
 
-  const allGenres = ['refactoring', 'agile', 'patterns', 'design', 'crime', 'classic', 'all genres']
+  const genreBookResult = useQuery(ALL_BOOKS, {
+    variables: { genre },
+    skip: !genre
+  })
 
-  if (result.loading) return null
+  if (result.loading || genreBookResult.loading) return null
 
-  const books = result.data.allBooks
+  const allBooks = result.data.allBooks
+
+  const allGenres = [...new Set(allBooks.reduce((f, s) => f.concat(s.genres), []))]
+
+  const books = genre ? genreBookResult.data.allBooks : allBooks
 
   return (
     <div>

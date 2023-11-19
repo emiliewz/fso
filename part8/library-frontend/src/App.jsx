@@ -23,6 +23,8 @@ export const updateCache = (cache, query, addedBook) => {
   }
 
   cache.updateQuery(query, ({ allBooks }) => {
+    console.log('allbooks', allBooks)
+    console.log('all new books', allBooks.concat(addedBook))
     return {
       allBooks: uniqByName(allBooks.concat(addedBook)),
     }
@@ -38,7 +40,6 @@ export const updateCache = (cache, query, addedBook) => {
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
-  const client = useApolloClient()
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token')
@@ -47,17 +48,19 @@ const App = () => {
     }
   }, [])
 
+  const client = useApolloClient()
+
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       const addedBook = data.data.bookAdded
-      notify(`${addedBook.title} added`,'info')
+      notify(`${addedBook.title} added`, 'info')
 
       updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
     }
   })
 
-  const notify = (message,type) => {
-    setErrorMessage({message,type})
+  const notify = (message, type) => {
+    setErrorMessage({ message, type })
     setTimeout(() => {
       setErrorMessage(null)
     }, 10000)
