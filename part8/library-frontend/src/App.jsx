@@ -8,37 +8,36 @@ import Notify from './components/Notify'
 import { Link, Route, Routes } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
-import { ALL_BOOKS, BOOK_ADDED } from './queries'
-import { useApolloClient, useSubscription, useQuery } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './queries'
+import { useApolloClient, useSubscription } from '@apollo/client'
 
 // function that takes care of manipulating cache
-export const updateCache = (cache, query, addedBook) => {
+export const updateCache = (cache, addedBook) => {
   // helper that is used to eliminate saving same person twice
-  const uniqByName = (a) => {
+  const uniqByTitle = (a) => {
     let seen = new Set()
     return a.filter((item) => {
-      let k = item.name
+      let k = item.title
       return seen.has(k) ? false : seen.add(k)
     })
   }
 
-  cache.updateQuery(query, ({ allBooks }) => {
+  cache.updateQuery({ query: ALL_BOOKS, variables: { genre: null } }, ({ allBooks }) => {
     return {
-      allBooks: uniqByName(allBooks.concat(addedBook)),
+      allBooks: uniqByTitle(allBooks.concat(addedBook)),
     }
   })
 
-  // cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-  //   return {
-  //     allAuthors: allAuthors.concat(response.data.addBook.author)
-  //   }
-  // })
+  cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+    return {
+      allAuthors: allAuthors.concat(addedBook.author)
+    }
+  })
 }
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [token, setToken] = useState(null)
-  const client = useApolloClient()
 
   useEffect(() => {
     const token = localStorage.getItem('library-user-token')
@@ -47,17 +46,19 @@ const App = () => {
     }
   }, [])
 
+  const client = useApolloClient()
+
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       const addedBook = data.data.bookAdded
-      notify(`${addedBook.title} added`,'info')
+      notify(`${addedBook.title} added`, 'info')
 
-      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+      updateCache(client.cache, addedBook)
     }
   })
 
-  const notify = (message,type) => {
-    setErrorMessage({message,type})
+  const notify = (message, type) => {
+    setErrorMessage({ message, type })
     setTimeout(() => {
       setErrorMessage(null)
     }, 10000)
