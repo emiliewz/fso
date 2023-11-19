@@ -20,8 +20,8 @@ const authLink = setContext((_, { headers }) => {
 })
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000',
-  // uri: '/'
+  // uri: 'http://localhost:4000',
+  uri: '/'
 })
 
 const getWebsocketURI = () => {
@@ -31,9 +31,9 @@ const getWebsocketURI = () => {
 }
 
 const wsLink = new GraphQLWsLink(createClient({
-  url: 'ws://localhost:4000'
+  // url: 'ws://localhost:4000'
   // url: '/'
-  // url: `${getWebsocketURI()}`
+  url: `${getWebsocketURI()}`
 }))
 
 const splitLink = split(
