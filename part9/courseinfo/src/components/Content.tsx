@@ -4,7 +4,7 @@ import Part from './Part'
 const Content = ({ courseParts }: { courseParts: CoursePart []}) => {
   return (
     <>
-      {courseParts.map(p => <Part part={p} />)}
+      {courseParts.map(p => <Part key={p.name} part={p} />)}
     </>
   )
 }
