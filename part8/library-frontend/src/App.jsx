@@ -28,11 +28,11 @@ export const updateCache = (cache, addedBook) => {
     }
   })
 
-  cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-    return {
-      allAuthors: allAuthors.concat(addedBook.author)
-    }
-  })
+  // cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+  //   return {
+  //     allAuthors: allAuthors.concat(addedBook.author)
+  //   }
+  // })
 }
 
 const App = () => {
