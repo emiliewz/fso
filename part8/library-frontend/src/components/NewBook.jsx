@@ -6,15 +6,19 @@ import { updateCache } from '../App'
 
 
 const NewBook = ({ setError }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [published, setPublished] = useState('')
+  const [title, setTitle] = useState('title')
+  const [author, setAuthor] = useState('author')
+  const [published, setPublished] = useState(2023)
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
-      const messages = error.graphQLErrors.map(e => e.message).join('/n')
+      let messages = error.graphQLErrors.map(e => e.message).join('\n')
+      // console.log(error.graphQLErrors[0].extensions);
+      if (error.graphQLErrors[0]?.extensions) {
+        messages += error.graphQLErrors[0].extensions?.error?.message
+      }
       setError(messages)
     },
     update: (cache, response) => {
