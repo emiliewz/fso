@@ -155,7 +155,7 @@ describe('blogs api', () => {
           .expect(200)
 
         expect(updatedBlog.body.likes).toBe(blogToUpdate.likes + 1)
-      })``
+      })
     })
   })
 
