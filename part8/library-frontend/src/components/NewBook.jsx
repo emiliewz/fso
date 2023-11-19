@@ -27,7 +27,7 @@ const NewBook = ({ setError }) => {
       navigate('/books')
     },
     update: (cache, response) => {
-      updateCache(cache, { query: ALL_BOOKS }, response.data.addBook)
+      updateCache(cache, response.data.addBook)
     },
   })
 

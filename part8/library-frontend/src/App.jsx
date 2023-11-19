@@ -8,12 +8,20 @@ import Notify from './components/Notify'
 import { Link, Route, Routes } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
-import { ALL_BOOKS, BOOK_ADDED } from './queries'
-import { useApolloClient, useSubscription, useQuery } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './queries'
+import { useApolloClient, useSubscription } from '@apollo/client'
 
 // function that takes care of manipulating cache
-export const updateCache = (cache, query, addedBook) => {
+export const updateCache = (cache, addedBook) => {
   // helper that is used to eliminate saving same person twice
+  const uniqByTitle = (a) => {
+    let seen = new Set()
+    return a.filter((item) => {
+      let k = item.title
+      return seen.has(k) ? false : seen.add(k)
+    })
+  }
+
   const uniqByName = (a) => {
     let seen = new Set()
     return a.filter((item) => {
@@ -22,19 +30,17 @@ export const updateCache = (cache, query, addedBook) => {
     })
   }
 
-  cache.updateQuery(query, ({ allBooks }) => {
-    console.log('allbooks', allBooks)
-    console.log('all new books', allBooks.concat(addedBook))
+  cache.updateQuery({ query: ALL_BOOKS, variables: { genre: null } }, ({ allBooks }) => {
     return {
-      allBooks: uniqByName(allBooks.concat(addedBook)),
+      allBooks: uniqByTitle(allBooks.concat(addedBook)),
     }
   })
 
-  // cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-  //   return {
-  //     allAuthors: allAuthors.concat(response.data.addBook.author)
-  //   }
-  // })
+  cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+    return {
+      allAuthors: uniqByName(allAuthors.concat(addedBook.author))
+    }
+  })
 }
 
 const App = () => {
@@ -55,7 +61,7 @@ const App = () => {
       const addedBook = data.data.bookAdded
       notify(`${addedBook.title} added`, 'info')
 
-      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+      updateCache(client.cache, addedBook)
     }
   })
 
