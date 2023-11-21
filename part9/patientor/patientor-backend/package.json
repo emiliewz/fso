@@ -7,7 +7,8 @@
     "tsc": "tsc",
     "dev": "ts-node-dev src/index.ts",
     "lint": "eslint --ext .ts .",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "build:ui": "rm -rf dist && cd ../patientor-frontend && npm run build && cp -r dist ../patientor-backend"
   },
   "keywords": [],
   "author": "",
