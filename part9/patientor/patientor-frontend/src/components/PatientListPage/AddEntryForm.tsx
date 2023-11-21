@@ -104,7 +104,7 @@ const AddEntryForm = ({ id, setEntries, diagnoses }: Props) => {
   };
 
   const handleType = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newType: string | null,
   ) => {
     setType(newType as Type);
